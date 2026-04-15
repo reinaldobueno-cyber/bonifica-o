@@ -71,7 +71,7 @@
         <div class="sec-title">Informações individuais por colaborador</div>
         <div class="grid g4">
           <div><label>Nome</label><input id="fNome" placeholder="Nome completo" oninput="renderLancResumo()"></div>
-          <div><label>Equipe</label><select id="fEquipe" onchange="renderLancResumo()"><option>Reprodutivo</option><option>Engorda</option><option>Infra</option><option>Sem equipe</option></select></div>
+          <div><label>Equipe</label><select id="fEquipe" onchange="renderLancResumo()"><option>Reprodução</option><option>Engorda</option><option>Infraestrutura</option><option>Sem equipe</option></select></div>
           <div><label>Grupo de cálculo</label><select id="fGrupo" onchange="renderLancResumo()"><option value="suporte">Suporte</option><option value="infra">Infra</option></select></div>
           <div><label>Dias trabalhados</label><input type="number" id="fDiasTrab" min="0" max="31" value="22" oninput="renderLancResumo()"></div>
         </div>
@@ -139,9 +139,27 @@ const METRICS_HELP = [
 ];
 
 const TEAM_BY_NAME = {
-  'dhonleno freitas':'Reprodutivo','evelyn souza':'Reprodutivo','gabriel de oliveira':'Engorda','lais medeiros':'Engorda',
-  'raissa ribeiro':'Reprodutivo','ana paula':'Infra','julia almeda':'Infra','natalia vieira':'Engorda','wiviane limiro':'Reprodutivo',
-  'alexandre lobo':'Infra','wanderley cabral':'Infra','beatriz':'Reprodutivo','gabriel almeida':'Engorda'
+  // Reprodução
+  'raissa ribeiro':'Reprodução',
+  'lais medeiros':'Reprodução',
+  'julia almeda':'Reprodução',
+  'evelyn souza':'Reprodução',
+  'alexandre lobo':'Reprodução',
+
+  // Engorda
+  'wiviane limiro':'Engorda',
+  'marcus':'Engorda',
+  'marcelo santos':'Engorda',
+  'natalia vieira':'Engorda',
+  'ana paula':'Engorda',
+
+  // Infraestrutura
+  'marcelo costa':'Infraestrutura',
+  'dhonleno freitas':'Infraestrutura',
+  'dhon':'Infraestrutura',
+  'gabriel':'Infraestrutura',
+  'gabriel de oliveira':'Infraestrutura',
+  'gabriel almeida':'Infraestrutura'
 };
 
 const RAW_SEED = {"2026-02":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Wanderley Cabral","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Gabriel Almeida","total":311}]},"2026-03":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo Costa","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Marcelo Santos","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Marcus","total":311}]},"2026-01":{"agents":[{"nome":"Dhonleno Freitas","total":455},{"nome":"Evelyn Souza","total":506},{"nome":"Gabriel de oliveira","total":650},{"nome":"Lais Medeiros","total":504.5},{"nome":"Raissa Ribeiro","total":650},{"nome":"Ana Paula","total":667.25}]},"2025-12":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":515},{"nome":"Raissa Ribeiro","total":503.75},{"nome":"Ana Paula","total":517.25}]}};
@@ -182,9 +200,12 @@ function reconcileFebruary(base){
 }
 
 function inferTeam(nome,grupo){
-  if(grupo === 'infra') return 'Infra';
+  if(grupo === 'infra') return 'Infraestrutura';
   const n = normalize(nome);
-  return TEAM_BY_NAME[n] || 'Sem equipe';
+  if (TEAM_BY_NAME[n]) return TEAM_BY_NAME[n];
+  if (n.includes('gabriel')) return 'Infraestrutura';
+  if (n.includes('dhon')) return 'Infraestrutura';
+  return 'Sem equipe';
 }
 
 function normalize(s=''){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
@@ -293,7 +314,7 @@ function renderDash(){
         <table><thead><tr><th>#</th><th>Pessoa</th><th>Equipe</th><th class="right">Valor</th><th class="right">Δ vs mês anterior</th></tr></thead><tbody>${ranking||'<tr><td colspan="5">Sem dados</td></tr>'}</tbody></table>
       </div>
       <div>
-        <div class="tag">Consolidação por equipe (Reprodutivo, Engorda, Infra, Sem equipe)</div>
+        <div class="tag">Consolidação por equipe (Reprodução, Engorda, Infraestrutura, Sem equipe)</div>
         <table><thead><tr><th>#</th><th>Equipe</th><th>Pessoas</th><th class="right">Total</th><th class="right">Média</th><th class="right">Participação</th></tr></thead><tbody>${teamRows||'<tr><td colspan="6">Sem dados</td></tr>'}</tbody></table>
       </div>
     </div>`;

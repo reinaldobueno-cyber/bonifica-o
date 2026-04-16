@@ -625,36 +625,54 @@ async function gerarPDF(){
     if (target && target.parentNode) target.parentNode.replaceChild(img, target);
   });
 
-  const canvas = await html2canvas(cloneWrap, {scale: 2, useCORS: true, backgroundColor: '#ffffff'});
-  document.body.removeChild(cloneWrap);
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 5;
   const renderWidthMm = pageWidth - (margin * 2);
   const renderHeightMm = pageHeight - (margin * 2);
-  const pxPerMm = canvas.width / renderWidthMm;
-  const pageSliceHeightPx = Math.floor(renderHeightMm * pxPerMm);
+  let cursorY = margin;
+  const blockGap = 2;
+  const blocks = [...clone.children];
 
-  let yOffset = 0;
-  let pageIndex = 0;
-  while (yOffset < canvas.height) {
-    const sliceHeight = Math.min(pageSliceHeightPx, canvas.height - yOffset);
-    const pageCanvas = document.createElement('canvas');
-    pageCanvas.width = canvas.width;
-    pageCanvas.height = sliceHeight;
-    const pageCtx = pageCanvas.getContext('2d');
-    pageCtx.drawImage(canvas, 0, yOffset, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+  for (let i = 0; i < blocks.length; i++) {
+    const blockCanvas = await html2canvas(blocks[i], {scale: 2, useCORS: true, backgroundColor: '#ffffff'});
+    const blockPxPerMm = blockCanvas.width / renderWidthMm;
+    const blockHeightMm = blockCanvas.height / blockPxPerMm;
 
-    const sliceImg = pageCanvas.toDataURL('image/png');
-    const sliceHeightMm = sliceHeight / pxPerMm;
+    // Bloco cabe inteiro em uma página
+    if (blockHeightMm <= renderHeightMm) {
+      if (cursorY + blockHeightMm > (pageHeight - margin)) {
+        pdf.addPage();
+        cursorY = margin;
+      }
+      pdf.addImage(blockCanvas.toDataURL('image/png'), 'PNG', margin, cursorY, renderWidthMm, blockHeightMm);
+      cursorY += blockHeightMm + blockGap;
+      continue;
+    }
 
-    if (pageIndex > 0) pdf.addPage();
-    pdf.addImage(sliceImg, 'PNG', margin, margin, renderWidthMm, sliceHeightMm);
-
-    yOffset += sliceHeight;
-    pageIndex += 1;
+    // Bloco é maior que uma página: fatiar somente esse bloco
+    if (cursorY !== margin) {
+      pdf.addPage();
+      cursorY = margin;
+    }
+    const pageSliceHeightPx = Math.floor(renderHeightMm * blockPxPerMm);
+    let yOffset = 0;
+    while (yOffset < blockCanvas.height) {
+      const sliceHeight = Math.min(pageSliceHeightPx, blockCanvas.height - yOffset);
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width = blockCanvas.width;
+      pageCanvas.height = sliceHeight;
+      const pageCtx = pageCanvas.getContext('2d');
+      pageCtx.drawImage(blockCanvas, 0, yOffset, blockCanvas.width, sliceHeight, 0, 0, blockCanvas.width, sliceHeight);
+      const sliceHeightMm = sliceHeight / blockPxPerMm;
+      pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', margin, margin, renderWidthMm, sliceHeightMm);
+      yOffset += sliceHeight;
+      if (yOffset < blockCanvas.height) pdf.addPage();
+    }
+    cursorY = margin;
   }
+  document.body.removeChild(cloneWrap);
 
   pdf.save(`fechamento_${month}.pdf`);
   document.getElementById('pdfPreview').innerHTML = `<div class="alert ok">PDF gerado em modo espelho do relatório (${monthLabel(month)}) com gráficos, tabelas e observações visuais.</div>`;

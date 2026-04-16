@@ -607,7 +607,9 @@ function printReport(){
 }
 
 async function gerarPDF(){
+  const currentObs = document.getElementById('reportObs')?.value || '';
   renderReportPanel();
+  if (document.getElementById('reportObs')) document.getElementById('reportObs').value = currentObs;
   await new Promise(resolve => setTimeout(resolve, 450));
   cRelMes?.update('none');
   cRelNucleo?.update('none');
@@ -640,6 +642,22 @@ async function gerarPDF(){
     if (target && target.parentNode) target.parentNode.replaceChild(img, target);
   });
 
+  // Troca textarea por bloco estático para o texto aparecer no PDF
+  const clonedObsTextarea = clone.querySelector('#reportObs');
+  if (clonedObsTextarea) {
+    const obsText = document.createElement('div');
+    obsText.style.border = '1px solid #d8e5dd';
+    obsText.style.borderRadius = '8px';
+    obsText.style.minHeight = '110px';
+    obsText.style.padding = '10px';
+    obsText.style.whiteSpace = 'pre-wrap';
+    obsText.style.color = '#143226';
+    obsText.style.fontFamily = 'Inter, sans-serif';
+    obsText.style.fontSize = '13px';
+    obsText.textContent = currentObs || ' ';
+    clonedObsTextarea.parentNode.replaceChild(obsText, clonedObsTextarea);
+  }
+
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
@@ -652,7 +670,7 @@ async function gerarPDF(){
 
   for (let i = 0; i < blocks.length; i++) {
     const isObservacaoBlock = blocks[i].classList?.contains('obs-card') || !!blocks[i].querySelector('#reportObs') || /observações do fechamento/i.test(blocks[i].innerText || '');
-    if (isObservacaoBlock && cursorY !== margin) {
+    if (isObservacaoBlock) {
       pdf.addPage();
       cursorY = margin;
     }

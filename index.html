@@ -35,6 +35,7 @@
       .pg{display:none!important}
       #pg-rel{display:block!important}
       #reportPrintArea{border:none!important;padding:0!important}
+      .obs-card{break-before:page;page-break-before:always}
     }
   </style>
 </head>
@@ -563,7 +564,7 @@ function renderReportPanel(){
       ${blocosNucleo || '<span class="mut">Sem dados para o mês selecionado.</span>'}
       <table><tbody><tr><td><b>Total Geral</b></td><td class="right"><b>${fmt(total)}</b></td></tr></tbody></table>
     </div>
-    <div class="card" style="margin-top:8px">
+    <div class="card obs-card" id="obsCard" style="margin-top:8px">
       <div class="sec-title">Observações do fechamento</div>
       <textarea id="reportObs" rows="5" placeholder="Espaço para explicar ajustes, decisões gerenciais e justificativas do fechamento."></textarea>
       <div class="mut" style="margin-top:6px">Este campo é incluído no PDF e aparece na impressão.</div>
@@ -636,7 +637,7 @@ async function gerarPDF(){
   const blocks = [...clone.children];
 
   for (let i = 0; i < blocks.length; i++) {
-    const isObservacaoBlock = !!blocks[i].querySelector('#reportObs') || /observações do fechamento/i.test(blocks[i].innerText || '');
+    const isObservacaoBlock = blocks[i].classList?.contains('obs-card') || !!blocks[i].querySelector('#reportObs') || /observações do fechamento/i.test(blocks[i].innerText || '');
     if (isObservacaoBlock && cursorY !== margin) {
       pdf.addPage();
       cursorY = margin;

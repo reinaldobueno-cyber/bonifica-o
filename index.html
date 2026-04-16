@@ -574,13 +574,15 @@ function renderReportPanel(){
   cRelMes = new Chart(document.getElementById('relChartMes'),{
     type:'line',
     plugins:[chartValuePlugin],
-    data:{labels:months.map(monthLabel),datasets:[{label:'Total do mês',data:monthTotals,borderColor:'#246a4b',tension:.2}]}
+    data:{labels:months.map(monthLabel),datasets:[{label:'Total do mês',data:monthTotals,borderColor:'#246a4b',tension:.2}]},
+    options:{animation:false}
   });
   if(cRelNucleo) cRelNucleo.destroy();
   cRelNucleo = new Chart(document.getElementById('relChartNucleo'),{
     type:'bar',
     plugins:[chartValuePlugin],
-    data:{labels:Object.keys(byNucleo),datasets:[{label:'Total por núcleo',data:Object.values(byNucleo),backgroundColor:['#2f7f5a','#7ca980','#506f8f','#b3b3b3']}]}
+    data:{labels:Object.keys(byNucleo),datasets:[{label:'Total por núcleo',data:Object.values(byNucleo),backgroundColor:['#2f7f5a','#7ca980','#506f8f','#b3b3b3']}]},
+    options:{animation:false}
   });
 }
 
@@ -591,11 +593,15 @@ function printReport(){
 
 async function gerarPDF(){
   renderReportPanel();
+  await new Promise(resolve => setTimeout(resolve, 450));
+  cRelMes?.update('none');
+  cRelNucleo?.update('none');
+  await new Promise(resolve => requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   const month = document.getElementById('pdfMonth').value;
   const reportEl = document.getElementById('reportPrintArea');
   const { jsPDF } = window.jspdf;
 
-  const canvas = await html2canvas(reportEl, {scale: 2, useCORS: true, backgroundColor: '#ffffff'});
+  const canvas = await html2canvas(reportEl, {scale: 2, useCORS: true, backgroundColor: '#ffffff', foreignObjectRendering: true});
   const imgData = canvas.toDataURL('image/png');
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();

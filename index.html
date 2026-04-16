@@ -636,6 +636,12 @@ async function gerarPDF(){
   const blocks = [...clone.children];
 
   for (let i = 0; i < blocks.length; i++) {
+    const isObservacaoBlock = !!blocks[i].querySelector('#reportObs') || /observações do fechamento/i.test(blocks[i].innerText || '');
+    if (isObservacaoBlock && cursorY !== margin) {
+      pdf.addPage();
+      cursorY = margin;
+    }
+
     const blockCanvas = await html2canvas(blocks[i], {scale: 2, useCORS: true, backgroundColor: '#ffffff'});
     const blockPxPerMm = blockCanvas.width / renderWidthMm;
     const blockHeightMm = blockCanvas.height / blockPxPerMm;

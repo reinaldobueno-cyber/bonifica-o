@@ -12,6 +12,8 @@
     :root{--g:#246a4b;--bg:#f5f8f6;--bd:#d8e5dd;--tx:#143226;--mut:#678476;--w:#fff;--warn:#915f00;--danger:#b93030;--ok:#1b7e46;--rad:12px}
     *{box-sizing:border-box;margin:0;padding:0} body{font-family:Inter,sans-serif;background:var(--bg);color:var(--tx)}
     .hdr{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;padding:12px 20px;z-index:5}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand-logo{width:170px;height:36px;display:block}
     .nav{display:flex;gap:6px;flex-wrap:wrap}.nav button{border:1px solid var(--bd);background:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}.nav button.on{background:#eaf3ee;border-color:#b5d2c1}
     .main{max-width:1280px;margin:0 auto;padding:20px}.pg{display:none}.pg.on{display:block}
     .ph{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:14px;flex-wrap:wrap}.pt{font-size:22px;font-weight:800}
@@ -41,7 +43,14 @@
 </head>
 <body>
   <header class="hdr">
-    <strong>Bonificação Suporte — Fechamento Gerencial</strong>
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 360 70" xmlns="http://www.w3.org/2000/svg" aria-label="MULTSOFT">
+        <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#19a7b8"/><stop offset="1" stop-color="#2bc6d6"/></linearGradient></defs>
+        <text x="0" y="52" font-size="58" font-family="Inter, Arial, sans-serif" font-weight="800" fill="url(#g1)">MULT</text>
+        <text x="175" y="52" font-size="58" font-family="Inter, Arial, sans-serif" font-weight="800" fill="#9ba0a6">SOFT</text>
+      </svg>
+      <strong>Bonificação Suporte — Fechamento Gerencial</strong>
+    </div>
     <nav class="nav">
       <button class="on" onclick="goTab('dash',this)">Dashboard</button>
       <button onclick="goTab('lancar',this)">Lançamento</button>
@@ -71,16 +80,16 @@
         <div class="grid g3">
           <div><label>Mês referência</label><input type="month" id="fMes" onchange="renderLancResumo()"></div>
           <div><label>Dias úteis do mês</label><input type="number" id="fDiasUteis" min="1" max="31" value="22" oninput="renderLancResumo()"></div>
-          <div><label>Total esperado (fechamento oficial)</label><input type="number" id="fTotalEsperado" step="0.01" placeholder="Opcional para validação" oninput="renderLancResumo()"></div>
+          <div><label>Total esperado (fechamento oficial) <span class="mut" title="Use este campo apenas quando já existe um valor oficial aprovado para conferência do mês.">ⓘ</span></label><input type="number" id="fTotalEsperado" step="0.01" placeholder="Opcional para validação" oninput="renderLancResumo()"><div class="mut" style="margin-top:4px;font-size:12px">Ajuda: se você ainda está montando o mês, deixe em branco. Preencha somente quando tiver o total oficial para validar divergências.</div></div>
         </div>
       </div>
 
       <div class="card">
         <div class="sec-title">Informações individuais por colaborador</div>
         <div class="grid g4">
-          <div><label>Nome</label><input id="fNome" placeholder="Nome completo" oninput="renderLancResumo()"></div>
+          <div><label>Nome do colaborador (seleção obrigatória)</label><select id="fNome" onchange="renderLancResumo()"><option value="">Selecione o colaborador</option></select><div class="mut" style="margin-top:4px;font-size:12px">Use sempre a lista para evitar variação de nome e erro no fechamento.</div></div>
           <div><label>Equipe</label><select id="fEquipe" onchange="renderLancResumo()"><option>Núcleo Reprodução</option><option>Núcleo Engorda</option><option>Núcleo Infraestrutura</option><option>Sem equipe</option></select></div>
-          <div><label>Grupo de cálculo</label><select id="fGrupo" onchange="renderLancResumo()"><option value="suporte">Suporte</option><option value="infra">Infra</option></select></div>
+          <div><label>Grupo de cálculo (fixo neste fechamento)</label><select id="fGrupo" onchange="renderLancResumo()" disabled><option value="suporte" selected>Suporte</option></select><div class="mut" style="margin-top:4px;font-size:12px">Este módulo está fixado em Suporte. Futuramente pode ser aberto para outras equipes.</div></div>
           <div><label>Dias trabalhados</label><input type="number" id="fDiasTrab" min="0" max="31" value="22" oninput="renderLancResumo()"></div>
         </div>
       </div>
@@ -359,6 +368,15 @@ function renderMonthSelectors(){
   const years = [...new Set(months.map(m=>m.split('-')[0]))].sort();
   yearSel.innerHTML = `<option value="all">Versão completa</option>` + years.map(y=>`<option value="${y}">Somente ${y}</option>`).join('');
   yearSel.value = years.includes(currentScope) || currentScope === 'all' ? currentScope : 'all';
+  populateCollaboratorOptions();
+}
+
+function populateCollaboratorOptions(){
+  const sel = document.getElementById('fNome');
+  const current = sel.value || '';
+  const names = [...new Set(Object.values(db.months).flatMap(m => (m.agents||[]).map(a => a.nome)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  sel.innerHTML = '<option value=\"\">Selecione o colaborador</option>' + names.map(n=>`<option value=\"${n}\">${n}</option>`).join('');
+  sel.value = names.includes(current) ? current : '';
 }
 
 function getReportMonths(){
@@ -597,7 +615,7 @@ function renderReportPanel(){
     type:'bar',
     plugins:[chartValuePlugin],
     data:{labels:Object.keys(byNucleo),datasets:[{label:'Total por núcleo',data:Object.values(byNucleo),backgroundColor:['#2f7f5a','#7ca980','#506f8f','#b3b3b3']}]},
-    options:{animation:false}
+    options:{animation:false,plugins:{legend:{display:false}}}
   });
 }
 

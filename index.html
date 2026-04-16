@@ -601,7 +601,32 @@ async function gerarPDF(){
   const reportEl = document.getElementById('reportPrintArea');
   const { jsPDF } = window.jspdf;
 
-  const canvas = await html2canvas(reportEl, {scale: 2, useCORS: true, backgroundColor: '#ffffff', foreignObjectRendering: true});
+  // Captura estável: clona o relatório e converte os canvases para imagens
+  const cloneWrap = document.createElement('div');
+  cloneWrap.style.position = 'fixed';
+  cloneWrap.style.left = '0';
+  cloneWrap.style.top = '0';
+  cloneWrap.style.zIndex = '-1';
+  cloneWrap.style.background = '#fff';
+  cloneWrap.style.padding = '16px';
+  cloneWrap.style.width = `${reportEl.offsetWidth || 1200}px`;
+  const clone = reportEl.cloneNode(true);
+  cloneWrap.appendChild(clone);
+  document.body.appendChild(cloneWrap);
+
+  const originalCanvases = reportEl.querySelectorAll('canvas');
+  const clonedCanvases = clone.querySelectorAll('canvas');
+  originalCanvases.forEach((canvas, idx) => {
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.style.width = `${canvas.clientWidth || canvas.width}px`;
+    img.style.height = `${canvas.clientHeight || canvas.height}px`;
+    const target = clonedCanvases[idx];
+    if (target && target.parentNode) target.parentNode.replaceChild(img, target);
+  });
+
+  const canvas = await html2canvas(cloneWrap, {scale: 2, useCORS: true, backgroundColor: '#ffffff'});
+  document.body.removeChild(cloneWrap);
   const imgData = canvas.toDataURL('image/png');
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();

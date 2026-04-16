@@ -87,9 +87,9 @@
       <div class="card">
         <div class="sec-title">Informações individuais por colaborador</div>
         <div class="grid g4">
-          <div><label>Nome</label><input id="fNome" placeholder="Nome completo" oninput="renderLancResumo()"></div>
+          <div><label>Nome do colaborador (seleção obrigatória)</label><select id="fNome" onchange="renderLancResumo()"><option value="">Selecione o colaborador</option></select><div class="mut" style="margin-top:4px;font-size:12px">Use sempre a lista para evitar variação de nome e erro no fechamento.</div></div>
           <div><label>Equipe</label><select id="fEquipe" onchange="renderLancResumo()"><option>Núcleo Reprodução</option><option>Núcleo Engorda</option><option>Núcleo Infraestrutura</option><option>Sem equipe</option></select></div>
-          <div><label>Grupo de cálculo</label><select id="fGrupo" onchange="renderLancResumo()"><option value="suporte">Suporte</option><option value="infra">Infra</option></select></div>
+          <div><label>Grupo de cálculo (fixo neste fechamento)</label><select id="fGrupo" onchange="renderLancResumo()" disabled><option value="suporte" selected>Suporte</option></select><div class="mut" style="margin-top:4px;font-size:12px">Este módulo está fixado em Suporte. Futuramente pode ser aberto para outras equipes.</div></div>
           <div><label>Dias trabalhados</label><input type="number" id="fDiasTrab" min="0" max="31" value="22" oninput="renderLancResumo()"></div>
         </div>
       </div>
@@ -368,6 +368,15 @@ function renderMonthSelectors(){
   const years = [...new Set(months.map(m=>m.split('-')[0]))].sort();
   yearSel.innerHTML = `<option value="all">Versão completa</option>` + years.map(y=>`<option value="${y}">Somente ${y}</option>`).join('');
   yearSel.value = years.includes(currentScope) || currentScope === 'all' ? currentScope : 'all';
+  populateCollaboratorOptions();
+}
+
+function populateCollaboratorOptions(){
+  const sel = document.getElementById('fNome');
+  const current = sel.value || '';
+  const names = [...new Set(Object.values(db.months).flatMap(m => (m.agents||[]).map(a => a.nome)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  sel.innerHTML = '<option value=\"\">Selecione o colaborador</option>' + names.map(n=>`<option value=\"${n}\">${n}</option>`).join('');
+  sel.value = names.includes(current) ? current : '';
 }
 
 function getReportMonths(){

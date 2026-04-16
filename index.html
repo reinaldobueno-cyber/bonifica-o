@@ -627,23 +627,33 @@ async function gerarPDF(){
 
   const canvas = await html2canvas(cloneWrap, {scale: 2, useCORS: true, backgroundColor: '#ffffff'});
   document.body.removeChild(cloneWrap);
-  const imgData = canvas.toDataURL('image/png');
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = pageWidth - 10;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  const margin = 5;
+  const renderWidthMm = pageWidth - (margin * 2);
+  const renderHeightMm = pageHeight - (margin * 2);
+  const pxPerMm = canvas.width / renderWidthMm;
+  const pageSliceHeightPx = Math.floor(renderHeightMm * pxPerMm);
 
-  let heightLeft = imgHeight;
-  let position = 5;
-  pdf.addImage(imgData, 'PNG', 5, position, imgWidth, imgHeight);
-  heightLeft -= (pageHeight - 10);
+  let yOffset = 0;
+  let pageIndex = 0;
+  while (yOffset < canvas.height) {
+    const sliceHeight = Math.min(pageSliceHeightPx, canvas.height - yOffset);
+    const pageCanvas = document.createElement('canvas');
+    pageCanvas.width = canvas.width;
+    pageCanvas.height = sliceHeight;
+    const pageCtx = pageCanvas.getContext('2d');
+    pageCtx.drawImage(canvas, 0, yOffset, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
 
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight + 5;
-    pdf.addPage();
-    pdf.addImage(imgData, 'PNG', 5, position, imgWidth, imgHeight);
-    heightLeft -= (pageHeight - 10);
+    const sliceImg = pageCanvas.toDataURL('image/png');
+    const sliceHeightMm = sliceHeight / pxPerMm;
+
+    if (pageIndex > 0) pdf.addPage();
+    pdf.addImage(sliceImg, 'PNG', margin, margin, renderWidthMm, sliceHeightMm);
+
+    yOffset += sliceHeight;
+    pageIndex += 1;
   }
 
   pdf.save(`fechamento_${month}.pdf`);

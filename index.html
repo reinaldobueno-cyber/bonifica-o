@@ -132,7 +132,7 @@
     </section>
 
     <section class="pg" id="pg-rel">
-      <div class="ph"><div><div class="pt">Relatório Formal em PDF</div><div class="mut">Documento gerencial por mês</div></div><div><select id="pdfMonth" onchange="renderReportPanel()"></select> <button class="btn bp" onclick="gerarPDF()">Gerar PDF</button> <button class="btn bo" onclick="printReport()">Imprimir relatório</button></div></div>
+      <div class="ph"><div><div class="pt">Relatório Formal em PDF</div><div class="mut">Documento gerencial por mês</div></div><div><select id="pdfMonth" onchange="renderReportPanel()"></select> <select id="reportScope" onchange="renderReportPanel()"><option value="all">Versão completa</option></select> <button class="btn bp" onclick="gerarPDF()">Gerar PDF</button> <button class="btn bo" onclick="printReport()">Imprimir relatório</button></div></div>
       <div class="card" id="pdfPreview"></div>
       <div class="card" id="reportPrintArea">
         <div id="reportPanel"></div>
@@ -354,6 +354,18 @@ function renderMonthSelectors(){
     el.innerHTML = months.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');
     if(cur) el.value = months.includes(cur)?cur:months[months.length-1];
   });
+  const yearSel = document.getElementById('reportScope');
+  const currentScope = yearSel.value || 'all';
+  const years = [...new Set(months.map(m=>m.split('-')[0]))].sort();
+  yearSel.innerHTML = `<option value="all">Versão completa</option>` + years.map(y=>`<option value="${y}">Somente ${y}</option>`).join('');
+  yearSel.value = years.includes(currentScope) || currentScope === 'all' ? currentScope : 'all';
+}
+
+function getReportMonths(){
+  const months = Object.keys(db.months).sort();
+  const scope = document.getElementById('reportScope')?.value || 'all';
+  if(scope === 'all') return months;
+  return months.filter(m => m.startsWith(`${scope}-`));
 }
 
 function renderKpis(month){
@@ -520,8 +532,10 @@ function renderReportPanel(){
   const arr = [...(db.months[month]?.agents||[])].map(a=>({...a,equipe:a.equipe||inferTeam(a.nome,a.grupo)})).sort((a,b)=>b.total-a.total);
   const total = round2(sum(arr.map(a=>a.total)));
   const byNucleo = arr.reduce((acc,a)=>{acc[a.equipe]=(acc[a.equipe]||0)+a.total;return acc;},{});
-  const months = Object.keys(db.months).sort();
+  const months = getReportMonths();
   const monthTotals = months.map(m=>totalMonth(m));
+  const scope = document.getElementById('reportScope')?.value || 'all';
+  const scopeLabel = scope === 'all' ? 'Versão completa (todos os anos)' : `Versão anual: ${scope}`;
   const monthRows = months.map((m,i)=>{
     const prev=i>0?monthTotals[i-1]:0;
     const diff=i>0?round2(monthTotals[i]-prev):0;
@@ -542,7 +556,7 @@ function renderReportPanel(){
 
   document.getElementById('reportPanel').innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px;flex-wrap:wrap">
-      <div><div class="pt" style="font-size:20px">Fechamento Gerencial — ${monthLabel(month)}</div><div class="mut">Relatório executivo para impressão e formalização</div></div>
+      <div><div class="pt" style="font-size:20px">Fechamento Gerencial — ${monthLabel(month)}</div><div class="mut">Relatório executivo para impressão e formalização · ${scopeLabel}</div></div>
       <div class="kpi" style="min-width:220px"><div class="l">Total Geral do Mês</div><div class="v">${fmt(total)}</div></div>
     </div>
     <div class="grid g2" style="margin-top:12px">
@@ -551,7 +565,7 @@ function renderReportPanel(){
     </div>
     <div class="grid g2" style="margin-top:8px">
       <div class="card">
-        <div class="sec-title">Números da evolução (todos os meses)</div>
+        <div class="sec-title">Números da evolução (${scope === 'all' ? 'todos os meses' : `apenas ${scope}`})</div>
         <table><thead><tr><th>Mês</th><th class="right">Total</th><th class="right">Variação</th></tr></thead><tbody>${monthRows}</tbody></table>
       </div>
       <div class="card">

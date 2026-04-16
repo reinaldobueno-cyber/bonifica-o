@@ -74,13 +74,14 @@
 
     <section class="pg" id="pg-lancar">
       <div class="ph"><div><div class="pt">Lançamento Inteligente</div><div class="mut">Revisão antes de salvar, validações e impacto financeiro em tempo real</div></div></div>
+      <div class="card"><div class="sec-title">Como preencher (resumo rápido)</div><div class="mut">1) Selecione mês e dias úteis. 2) Escolha colaborador na lista. 3) Preencha métricas. 4) <b>Total esperado</b> só quando o fechamento oficial já estiver aprovado.</div></div>
 
       <div class="card">
         <div class="sec-title">Informações gerais do mês</div>
         <div class="grid g3">
           <div><label>Mês referência</label><input type="month" id="fMes" onchange="renderLancResumo()"></div>
           <div><label>Dias úteis do mês</label><input type="number" id="fDiasUteis" min="1" max="31" value="22" oninput="renderLancResumo()"></div>
-          <div><label>Total esperado (fechamento oficial) <span class="mut" title="Use este campo apenas quando já existe um valor oficial aprovado para conferência do mês.">ⓘ</span></label><input type="number" id="fTotalEsperado" step="0.01" placeholder="Opcional para validação" oninput="renderLancResumo()"><div class="mut" style="margin-top:4px;font-size:12px">Ajuda: se você ainda está montando o mês, deixe em branco. Preencha somente quando tiver o total oficial para validar divergências.</div></div>
+          <div><label>Total esperado (fechamento oficial) <span class="mut" title="Informe aqui SOMENTE quando já existe valor oficial aprovado do fechamento. O sistema compara com o calculado e mostra divergência.">ⓘ</span></label><input type="number" id="fTotalEsperado" step="0.01" placeholder="Ex.: 7144,60 (somente mês já fechado)" oninput="renderLancResumo()"><div class="mut" style="margin-top:4px;font-size:12px"><b>Quando usar:</b> após o fechamento oficial. <b>Quando não usar:</b> durante montagem do mês (deixe em branco).</div></div>
         </div>
       </div>
 
@@ -391,7 +392,7 @@ function renderKpis(month){
   const prev = prevMonth(month); const prevTotal = prev ? sum((db.months[prev]?.agents||[]).map(a=>a.total)) : 0;
   const diff = round2(total-prevTotal); const top = [...arr].sort((a,b)=>b.total-a.total)[0];
   const cards = [
-    ['Total do mês', fmt(total)],
+    ['Total do mês <span class="mut" title="Este valor verde representa o total calculado para o mês selecionado.">ⓘ</span>', fmt(total)],
     ['Variação vs mês anterior', `${diff>=0?'+':''}${fmt(diff)}`],
     ['Maior ganho', top ? `${top.nome} (${fmt(top.total)})` : '—'],
     ['Colaboradores', arr.length]

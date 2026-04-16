@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root{--g:#246a4b;--bg:#f5f8f6;--bd:#d8e5dd;--tx:#143226;--mut:#678476;--w:#fff;--warn:#915f00;--danger:#b93030;--ok:#1b7e46;--rad:12px}
     *{box-sizing:border-box;margin:0;padding:0} body{font-family:Inter,sans-serif;background:var(--bg);color:var(--tx)}
@@ -175,7 +176,7 @@ const TEAM_BY_NAME = {
   'gabriel almeida':'Núcleo Infraestrutura'
 };
 
-const RAW_SEED = {"2026-02":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Wanderley Cabral","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Gabriel Almeida","total":311}]},"2026-03":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo Costa","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Marcelo Santos","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Marcus","total":311}]},"2026-01":{"agents":[{"nome":"Dhonleno Freitas","total":455.0},{"nome":"Evelyn Souza","total":506.0},{"nome":"Gabriel de Oliveira","total":650.0},{"nome":"Lais Medeiros","total":504.5},{"nome":"Marcelo","total":0.0},{"nome":"Raissa Ribeiro","total":650.0},{"nome":"Ana Paula","total":667.25},{"nome":"Julia Almeda","total":495.5},{"nome":"Natalia Vieira","total":567.0},{"nome":"Wiviane Limiro","total":464.0},{"nome":"Alexandre Lobo","total":477.5},{"nome":"Wanderley Cabral","total":193.75},{"nome":"Beatriz","total":392.75},{"nome":"Gabriel Almeida","total":401.0},{"nome":"Reinaldo Bueno","total":0.0}]},"2025-12":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":515},{"nome":"Raissa Ribeiro","total":503.75},{"nome":"Ana Paula","total":517.25}]}};
+const RAW_SEED = {"2026-02":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Wanderley Cabral","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Gabriel Almeida","total":311}]},"2024-08":{"agents":[{"nome":"Dhonleno Freitas","total":373.5},{"nome":"Evelyn Souza","total":387.17},{"nome":"Gabriel de Oliveira","total":373.5},{"nome":"Lais Medeiros","total":420.5},{"nome":"Lucas Pereira","total":420.5},{"nome":"Maria Eduarda","total":420.5},{"nome":"Raissa Ribeiro","total":420.5},{"nome":"Wiviane Limiro","total":423.17},{"nome":"Helder Andrade","total":373.5}]},"2024-09":{"agents":[{"nome":"Dhonleno Freitas","total":405},{"nome":"Evelyn Souza","total":439.5},{"nome":"Gabriel de Oliveira","total":405},{"nome":"Lais Medeiros","total":405.67},{"nome":"Lucas Pereira","total":427.5},{"nome":"Maria Eduarda","total":454.17},{"nome":"Raissa Ribeiro","total":427.5},{"nome":"Wiviane Limiro","total":451.5},{"nome":"Helder Andrade","total":429}]},"2024-10":{"agents":[{"nome":"Dhonleno Freitas","total":405},{"nome":"Evelyn Souza","total":451.5},{"nome":"Gabriel de Oliveira","total":373.5},{"nome":"Lais Medeiros","total":451.5},{"nome":"Lucas Pereira","total":450},{"nome":"Maria Eduarda","total":454.17},{"nome":"Raissa Ribeiro","total":450},{"nome":"Wiviane Limiro","total":433.5},{"nome":"Helder Andrade","total":453}]},"2024-11":{"agents":[{"nome":"Dhonleno Freitas","total":491},{"nome":"Evelyn Souza","total":503},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":604.5},{"nome":"Lucas Pereira","total":501.5},{"nome":"Maria Eduarda","total":501.5},{"nome":"Raissa Ribeiro","total":501.5},{"nome":"Wiviane Limiro","total":651.5},{"nome":"Helder Andrade","total":503},{"nome":"Sergio","total":252.5},{"nome":"Ana Paula","total":252.5},{"nome":"Reinaldo","total":200}]},"2024-12":{"agents":[{"nome":"Dhonleno Freitas","total":455},{"nome":"Evelyn Souza","total":504.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Lucas Pereira","total":477.5},{"nome":"Maria Eduarda","total":471.5},{"nome":"Raissa Ribeiro","total":477.5},{"nome":"Helder Andrade","total":500},{"nome":"Sergio","total":387.7},{"nome":"Ana Paula","total":287.7}]},"2025-01":{"agents":[{"nome":"Dhonleno Freitas","total":605},{"nome":"Evelyn Souza","total":491},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":551.5},{"nome":"Lucas Pereira","total":464},{"nome":"Maria Eduarda","total":501.5},{"nome":"Raissa Ribeiro","total":651.5},{"nome":"Helder Andrade","total":386.36},{"nome":"Sergio","total":501.5},{"nome":"Ana Paula","total":501.5}]},"2025-02":{"agents":[{"nome":"Dhonleno Freitas","total":450},{"nome":"Evelyn Souza","total":450},{"nome":"Gabriel de Oliveira","total":405},{"nome":"Lais Medeiros","total":451.5},{"nome":"Lucas Pereira","total":451.5},{"nome":"Maria Mariana","total":378},{"nome":"Raissa Ribeiro","total":451.5},{"nome":"Sergio","total":665.5},{"nome":"Ana Paula","total":436.5},{"nome":"Reinaldo","total":150}]},"2025-03":{"agents":[{"nome":"Dhonleno Freitas","total":482},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Lucas Pereira","total":878},{"nome":"Maria Mariana","total":419},{"nome":"Raissa Ribeiro","total":651.5},{"nome":"Sergio","total":750},{"nome":"Ana Paula","total":414.5},{"nome":"Reinaldo","total":150}]},"2025-04":{"agents":[{"nome":"Dhonleno Freitas","total":455},{"nome":"Evelyn Souza","total":491},{"nome":"Gabriel de Oliveira","total":468.5},{"nome":"Lais Medeiros","total":501.5},{"nome":"Maria Mariana","total":587},{"nome":"Raissa Ribeiro","total":551.5},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":473},{"nome":"Julia Almeda","total":477.5},{"nome":"Giovana Borges","total":464},{"nome":"Natalia Vieira","total":446}]},"2025-05":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":554.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Maria Mariana","total":587},{"nome":"Raissa Ribeiro","total":575},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":566.5},{"nome":"Julia Almeda","total":482},{"nome":"Natalia Vieira","total":551.5},{"nome":"Wiviane Limiro","total":500}]},"2025-06":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":554.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Maria Mariana","total":587},{"nome":"Raissa Ribeiro","total":575},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":566.5},{"nome":"Julia Almeda","total":482},{"nome":"Natalia Vieira","total":551.5},{"nome":"Wiviane Limiro","total":953},{"nome":"Reinaldo Bueno","total":150}]},"2025-07":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":550},{"nome":"Gabriel de Oliveira","total":650},{"nome":"Lais Medeiros","total":700},{"nome":"Maria Mariana","total":500},{"nome":"Raissa Ribeiro","total":650},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":656},{"nome":"Julia Almeda","total":500},{"nome":"Natalia Vieira","total":557.5},{"nome":"Wiviane Limiro","total":500},{"nome":"Alexandre Lobo","total":441.5},{"nome":"Wanderley Cabral","total":459.5}]},"2025-08":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":518.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":550},{"nome":"Maria Mariana","total":449},{"nome":"Raissa Ribeiro","total":464},{"nome":"Ana Paula","total":509},{"nome":"Julia Almeda","total":491},{"nome":"Natalia Vieira","total":500},{"nome":"Wiviane Limiro","total":514},{"nome":"Alexandre Lobo","total":480.5},{"nome":"Wanderley Cabral","total":459.5},{"nome":"Reinaldo Bueno","total":50}]},"2025-09":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":603},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":625},{"nome":"Raissa Ribeiro","total":578},{"nome":"Ana Paula","total":525},{"nome":"Julia Almeda","total":455},{"nome":"Natalia Vieira","total":509},{"nome":"Wiviane Limiro","total":550},{"nome":"Alexandre Lobo","total":480.5},{"nome":"Wanderley Cabral","total":459.5},{"nome":"Reinaldo Bueno","total":50}]},"2025-10":{"agents":[{"nome":"Dhonleno Freitas","total":550},{"nome":"Evelyn Souza","total":656},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":504.5},{"nome":"Marcelo","total":255.5},{"nome":"Raissa Ribeiro","total":495.5},{"nome":"Ana Paula","total":554.5},{"nome":"Julia Almeda","total":473},{"nome":"Natalia Vieira","total":519.5},{"nome":"Wiviane Limiro","total":607.5},{"nome":"Alexandre Lobo","total":491},{"nome":"Wanderley Cabral","total":459.5}]},"2025-11":{"agents":[{"nome":"Dhonleno Freitas","total":537},{"nome":"Evelyn Souza","total":550},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Marcelo","total":455},{"nome":"Raissa Ribeiro","total":651.5},{"nome":"Ana Paula","total":33.33},{"nome":"Julia Almeda","total":477.5},{"nome":"Natalia Vieira","total":501.5},{"nome":"Wiviane Limiro","total":577.5},{"nome":"Alexandre Lobo","total":500},{"nome":"Wanderley Cabral","total":441.5},{"nome":"Beatriz","total":441.5},{"nome":"Gabriel Almeida","total":477.5},{"nome":"Reinaldo Bueno","total":150}]},"2025-12":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":515},{"nome":"Marcelo","total":97.5},{"nome":"Raissa Ribeiro","total":503.75},{"nome":"Ana Paula","total":517.25},{"nome":"Julia Almeda","total":514.25},{"nome":"Natalia Vieira","total":565},{"nome":"Wiviane Limiro","total":532},{"nome":"Alexandre Lobo","total":491},{"nome":"Wanderley Cabral","total":459.5},{"nome":"Beatriz","total":518.75},{"nome":"Gabriel Almeida","total":483.5}]},"2026-01":{"agents":[{"nome":"Dhonleno Freitas","total":455.0},{"nome":"Evelyn Souza","total":506.0},{"nome":"Gabriel de Oliveira","total":650.0},{"nome":"Lais Medeiros","total":504.5},{"nome":"Marcelo","total":0.0},{"nome":"Raissa Ribeiro","total":650.0},{"nome":"Ana Paula","total":667.25},{"nome":"Julia Almeda","total":495.5},{"nome":"Natalia Vieira","total":567.0},{"nome":"Wiviane Limiro","total":464.0},{"nome":"Alexandre Lobo","total":477.5},{"nome":"Wanderley Cabral","total":193.75},{"nome":"Beatriz","total":392.75},{"nome":"Gabriel Almeida","total":401.0},{"nome":"Reinaldo Bueno","total":0.0}]},"2026-03":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo Costa","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Marcelo Santos","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Marcus","total":311}]}};
 
 const TARGETS = {"2026-02": {declaredTotal: 6014.20, note:'Comparativo oficial de março apontou fevereiro em R$ 6.014,20.'}};
 const CANONICAL_MONTHS = {
@@ -200,6 +201,26 @@ const CANONICAL_MONTHS = {
 
 const db = loadDb();
 let cPessoa, cMes, cEquipe, cRelMes, cRelNucleo;
+const chartValuePlugin = {
+  id:'valueLabels',
+  afterDatasetsDraw(chart){
+    const {ctx} = chart;
+    ctx.save();
+    ctx.fillStyle = '#2a4c3a';
+    ctx.font = '11px Inter';
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach((el, idx) => {
+        const value = dataset.data[idx];
+        if(value == null) return;
+        const pos = el.tooltipPosition();
+        const label = Number(value).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2});
+        ctx.fillText(label, pos.x - (label.length*2.7), pos.y - 8);
+      });
+    });
+    ctx.restore();
+  }
+};
 
 function loadDb(){
   const parsed = JSON.parse(localStorage.getItem('bonus_exec_v2') || 'null');
@@ -353,15 +374,15 @@ function renderDash(){
   renderKpis(month);
 
   if(cPessoa) cPessoa.destroy();
-  cPessoa = new Chart(document.getElementById('chartPessoa'), {type:'bar',data:{labels:arr.map(a=>a.nome),datasets:[{label:'Valor por pessoa',data:arr.map(a=>a.total),backgroundColor:'#3f7f61'}]}});
+  cPessoa = new Chart(document.getElementById('chartPessoa'), {type:'bar',plugins:[chartValuePlugin],data:{labels:arr.map(a=>a.nome),datasets:[{label:'Valor por pessoa',data:arr.map(a=>a.total),backgroundColor:'#3f7f61'}]}});
 
   const months = Object.keys(db.months).sort();
   if(cMes) cMes.destroy();
-  cMes = new Chart(document.getElementById('chartMes'), {type:'line',data:{labels:months.map(monthLabel),datasets:[{label:'Evolução do total mensal',data:months.map(m=>sum((db.months[m].agents||[]).map(a=>a.total))),borderColor:'#246a4b',tension:.2}]}});
+  cMes = new Chart(document.getElementById('chartMes'), {type:'line',plugins:[chartValuePlugin],data:{labels:months.map(monthLabel),datasets:[{label:'Evolução do total mensal',data:months.map(m=>sum((db.months[m].agents||[]).map(a=>a.total))),borderColor:'#246a4b',tension:.2}]}});
 
   const byTeam = arr.reduce((acc,a)=>{acc[a.equipe]=(acc[a.equipe]||0)+a.total;return acc;},{});
   if(cEquipe) cEquipe.destroy();
-  cEquipe = new Chart(document.getElementById('chartEquipe'), {type:'bar',data:{labels:Object.keys(byTeam),datasets:[{label:'Total por equipe',data:Object.values(byTeam),backgroundColor:['#2f7f5a','#7ca980','#506f8f','#b3b3b3']}]},options:{plugins:{title:{display:true,text:'Composição por equipe'}}}});
+  cEquipe = new Chart(document.getElementById('chartEquipe'), {type:'bar',plugins:[chartValuePlugin],data:{labels:Object.keys(byTeam),datasets:[{label:'Total por equipe',data:Object.values(byTeam),backgroundColor:['#2f7f5a','#7ca980','#506f8f','#b3b3b3']}]},options:{plugins:{title:{display:true,text:'Composição por equipe'}}}});
 
   const prev = prevMonth(month);
   const prevArr = db.months[prev]?.agents||[];
@@ -552,11 +573,13 @@ function renderReportPanel(){
   if(cRelMes) cRelMes.destroy();
   cRelMes = new Chart(document.getElementById('relChartMes'),{
     type:'line',
+    plugins:[chartValuePlugin],
     data:{labels:months.map(monthLabel),datasets:[{label:'Total do mês',data:monthTotals,borderColor:'#246a4b',tension:.2}]}
   });
   if(cRelNucleo) cRelNucleo.destroy();
   cRelNucleo = new Chart(document.getElementById('relChartNucleo'),{
     type:'bar',
+    plugins:[chartValuePlugin],
     data:{labels:Object.keys(byNucleo),datasets:[{label:'Total por núcleo',data:Object.values(byNucleo),backgroundColor:['#2f7f5a','#7ca980','#506f8f','#b3b3b3']}]}
   });
 }
@@ -566,60 +589,34 @@ function printReport(){
   window.print();
 }
 
-function gerarPDF(){
+async function gerarPDF(){
   renderReportPanel();
   const month = document.getElementById('pdfMonth').value;
-  const arr = [...(db.months[month]?.agents||[])].map(a=>({...a,equipe:a.equipe||inferTeam(a.nome,a.grupo)})).sort((a,b)=>b.total-a.total);
-  const v = validateMonth(month); const prev = prevMonth(month); const prevT = totalMonth(prev);
-  const { jsPDF } = window.jspdf; const doc = new jsPDF();
-  let y = 16;
-  doc.setFontSize(15); doc.text('Fechamento Gerencial de Bonificação', 14, y); y += 8;
-  doc.setFontSize(11); doc.text(`Mês de referência: ${monthLabel(month)} | Emitido em: ${new Date().toLocaleString('pt-BR')}`,14,y); y += 7;
-  doc.text(`Total do mês: ${fmt(v.total)} | Comparativo com anterior (${monthLabel(prev||month)}): ${fmt(round2(v.total-prevT))}`,14,y); y += 8;
-  doc.text('Resumo Executivo:',14,y); y += 6;
-  const ins = document.getElementById('insights').innerText.split('\n').filter(Boolean).slice(0,4);
-  ins.forEach(t=>{doc.text(`• ${t.substring(0,100)}`,16,y); y+=6;});
-  y += 2;
-  doc.text('Evolução mensal (todos os meses):',14,y); y+=6;
-  const months = Object.keys(db.months).sort();
-  months.forEach((m,i)=>{
-    const totalM = totalMonth(m);
-    const prevM = i>0 ? totalMonth(months[i-1]) : null;
-    const delta = prevM==null ? '—' : `${totalM>=prevM?'+':''}${fmt(round2(totalM-prevM))}`;
-    doc.text(`- ${monthLabel(m)}: ${fmt(totalM)} | variação: ${delta}`,16,y);
-    y+=6;
-    if(y>275){doc.addPage();y=16;}
-  });
+  const reportEl = document.getElementById('reportPrintArea');
+  const { jsPDF } = window.jspdf;
 
-  const mesCanvas = document.getElementById('relChartMes');
-  const nucleoCanvas = document.getElementById('relChartNucleo');
-  if(mesCanvas && nucleoCanvas){
-    if(y>180){doc.addPage();y=16;}
-    doc.text('Espelho visual do relatório:',14,y); y += 6;
-    try{
-      doc.addImage(mesCanvas.toDataURL('image/png'), 'PNG', 14, y, 86, 45);
-      doc.addImage(nucleoCanvas.toDataURL('image/png'), 'PNG', 108, y, 86, 45);
-      y += 50;
-    }catch(e){}
-  }
-  y += 2; doc.text('Consolidação por equipe:',14,y); y+=6;
-  Object.entries(v.byTeam).forEach(([k,val])=>{doc.text(`- ${k}: ${fmt(val)}`,16,y); y+=6;});
-  y += 2; doc.text('Valores individuais:',14,y); y+=6;
-  arr.slice(0,20).forEach(a=>{doc.text(`${a.nome} (${a.equipe}): ${fmt(a.total)}`,16,y); y+=6; if(y>275){doc.addPage();y=16;}});
-  const obs = (document.getElementById('reportObs')?.value || '').trim();
-  if(obs){
-    y += 4;
-    doc.text('Observações do fechamento:',14,y); y += 6;
-    const lines = doc.splitTextToSize(obs, 180);
-    lines.forEach(line=>{doc.text(line,16,y); y+=6; if(y>275){doc.addPage(); y=16;}});
-  }
-  y += 6;
-  doc.text('Observações relevantes e formalização:',14,y); y += 8;
-  doc.line(14,y,196,y); y += 20; doc.line(14,y,196,y); y += 20;
-  doc.text('Assinatura / apresentação gerencial',14,y);
-  doc.save(`fechamento_${month}.pdf`);
+  const canvas = await html2canvas(reportEl, {scale: 2, useCORS: true, backgroundColor: '#ffffff'});
+  const imgData = canvas.toDataURL('image/png');
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const imgWidth = pageWidth - 10;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-  document.getElementById('pdfPreview').innerHTML = `<div class="alert ok">PDF gerado para ${monthLabel(month)} com resumo executivo, comparativo, indivíduos e consolidação por equipe.</div>`;
+  let heightLeft = imgHeight;
+  let position = 5;
+  pdf.addImage(imgData, 'PNG', 5, position, imgWidth, imgHeight);
+  heightLeft -= (pageHeight - 10);
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight + 5;
+    pdf.addPage();
+    pdf.addImage(imgData, 'PNG', 5, position, imgWidth, imgHeight);
+    heightLeft -= (pageHeight - 10);
+  }
+
+  pdf.save(`fechamento_${month}.pdf`);
+  document.getElementById('pdfPreview').innerHTML = `<div class="alert ok">PDF gerado em modo espelho do relatório (${monthLabel(month)}) com gráficos, tabelas e observações visuais.</div>`;
 }
 
 function totalMonth(m){ if(!m || !db.months[m]) return 0; return round2(sum(db.months[m].agents.map(a=>a.total))); }

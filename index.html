@@ -1,734 +1,682 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bonificação Suporte</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<style>
-:root{
-  --g:#4a7c59;--gl:#6a9e78;--gp:#eef4f0;--gm:#d4e8da;--gd:#2d5040;
-  --w:#fff;--off:#f6f9f6;--bd:#dce8e0;--tx:#1a2e22;--mu:#7a9585;--so:#b5cfc0;
-  --red:#c0392b;--rp:#fdf0ee;--yl:#b07d2a;
-  --r:12px;--rs:8px;
-  --sh:0 1px 3px rgba(74,124,89,.07),0 4px 14px rgba(74,124,89,.06);
-  --shd:0 4px 24px rgba(74,124,89,.15);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--off);color:var(--tx);font-family:'Outfit',sans-serif;min-height:100vh;font-size:14px}
-
-/* HEADER */
-.hdr{background:var(--w);border-bottom:1.5px solid var(--bd);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 var(--bd)}
-.logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:var(--gd);letter-spacing:-.4px}
-.logo-mark{width:28px;height:28px;background:var(--g);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800}
-.nav{display:flex;gap:2px}
-.nb{padding:7px 16px;border-radius:var(--rs);border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;background:transparent;color:var(--mu);transition:all .15s}
-.nb.on{background:var(--gp);color:var(--gd);font-weight:600}
-.nb:hover:not(.on){background:var(--off);color:var(--tx)}
-.hdr-pill{font-size:12px;color:var(--mu);background:var(--off);border:1px solid var(--bd);padding:4px 12px;border-radius:20px}
-.hdr-pill strong{color:var(--gd)}
-
-/* LAYOUT */
-.main{max-width:1260px;margin:0 auto;padding:26px 32px}
-.pg{display:none}.pg.on{display:block}
-
-/* PAGE HEADER */
-.ph{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px}
-.pt{font-size:22px;font-weight:800;color:var(--gd);letter-spacing:-.4px}
-.ps{font-size:13px;color:var(--mu);margin-top:2px}
-
-/* KPI */
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.kpi{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--r);padding:20px 18px;box-shadow:var(--sh);position:relative;overflow:hidden}
-.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--g)}
-.kpi.yd::after{background:var(--gd)}.kpi.yy::after{background:var(--yl)}.kpi.yr::after{background:var(--red)}
-.kl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mu);margin-bottom:8px}
-.kv{font-size:24px;font-weight:800;color:var(--gd);line-height:1}
-.ks{font-size:12px;color:var(--mu);margin-top:4px}
-.ke{position:absolute;right:14px;top:14px;font-size:20px;opacity:.18}
-
-/* PANELS */
-.pan{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--r);padding:22px;box-shadow:var(--sh)}
-.pan+.pan{margin-top:14px}
-.pan-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--bd)}
-.pan-t{font-size:13px;font-weight:700;color:var(--gd)}
-.pan-b{background:var(--gp);color:var(--gd);font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
-
-/* RANKING */
-.rk{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd)}
-.rk:last-child{border-bottom:none;padding-bottom:0}
-.rn{font-family:'DM Mono',monospace;font-size:12px;color:var(--so);width:18px;text-align:right;flex-shrink:0}
-.rn.g1{color:#c9a227;font-weight:700}.rn.g2c{color:#8d9aab;font-weight:700}.rn.g3c{color:#a07550;font-weight:700}
-.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;letter-spacing:-.5px}
-.ri{flex:1;min-width:0}
-.rname{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rgrp{font-size:11px;color:var(--mu);margin-top:1px}
-.rb-bg{flex:1;height:4px;background:var(--gp);border-radius:2px;margin:0 8px}
-.rb-fg{height:4px;background:var(--g);border-radius:2px}
-.rv{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--gd);white-space:nowrap}
-
-/* AGENT CARDS */
-.ag-grid{display:flex;flex-direction:column;gap:9px}
-.ag{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rs);padding:12px 16px;display:flex;align-items:center;gap:12px;transition:border-color .15s,box-shadow .15s}
-.ag:hover{border-color:var(--gl);box-shadow:var(--shd)}
-.ag-main{flex:1;min-width:0}
-.ag-nr{display:flex;align-items:center;gap:7px}
-.ag-name{font-size:14px;font-weight:600}
-.gtag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;padding:2px 6px;border-radius:8px}
-.gs{background:var(--gp);color:var(--gd)}.gi{background:#e8f0fe;color:#2d4a8a}
-.pills{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
-.pill{background:var(--off);border:1px solid var(--bd);border-radius:20px;padding:2px 8px;font-size:11px;color:var(--mu)}
-.pill b{color:var(--tx);font-weight:600}
-.ag-tot{font-size:17px;font-weight:800;color:var(--gd);white-space:nowrap;font-family:'DM Mono',monospace}
-.ag-obs{font-size:11px;color:var(--mu);margin-top:2px;font-style:italic}
-.del-btn{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--rp);color:var(--red);transition:all .15s;flex-shrink:0}
-.del-btn:hover{background:#f5d5d2}
-
-/* FORM */
-.fc{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--r);padding:22px;margin-bottom:14px;box-shadow:var(--sh)}
-.fc-t{font-size:12px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;display:flex;align-items:center;gap:7px}
-.fc-t::before{content:'';width:3px;height:14px;background:var(--g);border-radius:2px}
-.fg{display:flex;flex-direction:column;gap:5px}
-.fg label{font-size:11px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.4px}
-.fg input,.fg select{background:var(--off);border:1.5px solid var(--bd);color:var(--tx);padding:9px 12px;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border .15s;width:100%}
-.fg input:focus,.fg select:focus{border-color:var(--g);background:#fff}
-.fg input::placeholder{color:var(--so)}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.sep{height:1px;background:var(--bd);margin:16px 0}
-
-/* CHECKBOXES */
-.cks{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
-.ck{display:flex;align-items:center;gap:9px;background:var(--off);border:1.5px solid var(--bd);border-radius:var(--rs);padding:9px 12px;cursor:pointer;transition:all .15s}
-.ck:hover{border-color:var(--gl)}
-.ck.on{border-color:var(--g);background:var(--gp)}
-.ck input{accent-color:var(--g);width:14px;height:14px;flex-shrink:0;cursor:pointer}
-.ck-l{flex:1;font-size:12px;font-weight:500}
-.ck-v{font-size:11px;font-weight:700;color:var(--gd);font-family:'DM Mono',monospace}
-
-/* PREVIEW */
-.prev{background:var(--gp);border:2px solid var(--gm);border-radius:var(--r);padding:20px;margin-top:14px}
-.prev-h{font-size:11px;font-weight:700;color:var(--gd);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
-.pv-r{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--gm);font-size:13px;gap:8px}
-.pv-l{color:var(--gd);flex:1}
-.pv-f{font-size:11px;background:var(--gm);color:var(--gd);padding:2px 7px;border-radius:8px;white-space:nowrap}
-.pv-v{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;min-width:78px;text-align:right;white-space:nowrap}
-.c-pos{color:var(--gd)}.c-neg{color:var(--red)}.c-z{color:var(--mu)}.c-bon{color:#1a5c38;font-weight:600}.c-inf{color:var(--mu);font-style:italic}
-.pv-tot{display:flex;justify-content:space-between;align-items:center;padding-top:12px;margin-top:6px;border-top:2px solid var(--g)}
-.pv-tl{font-size:14px;font-weight:700;color:var(--gd)}
-.pv-tv{font-size:20px;font-weight:800;color:var(--gd);font-family:'DM Mono',monospace}
-.pv-empty{color:var(--mu);font-size:13px;text-align:center;padding:14px 0}
-
-/* BUTTONS */
-.btn-r{display:flex;gap:9px;margin-top:14px}
-.btn{padding:10px 22px;border-radius:var(--rs);border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
-.bp{background:var(--g);color:#fff}.bp:hover{background:var(--gd)}
-.bo{background:transparent;color:var(--mu);border:1.5px solid var(--bd)}.bo:hover{border-color:var(--gl);color:var(--gd);background:var(--gp)}
-.bd2{background:var(--rp);color:var(--red);border:1.5px solid #f0c8c3}.bd2:hover{background:#f5d5d2}
-.btn-sm{padding:6px 13px;font-size:12px}
-
-/* HISTORY */
-.hm{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
-.hm-h{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .12s}
-.hm-h:hover{background:var(--off)}
-.hm-hn{font-size:15px;font-weight:700;color:var(--gd)}
-.hm-meta{font-size:12px;color:var(--mu);margin-top:1px}
-.hm-r{display:flex;align-items:center;gap:14px}
-.hm-tot{font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--gd)}
-.hm-chev{color:var(--mu);font-size:11px;transition:transform .2s}
-.hm-chev.op{transform:rotate(180deg)}
-.hm-body{display:none;border-top:1px solid var(--bd)}
-.hm-body.op{display:block}
-
-.ht{width:100%;border-collapse:collapse}
-.ht thead tr{background:var(--off)}
-.ht th{padding:9px 13px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);border-bottom:1px solid var(--bd);white-space:nowrap}
-.ht td{padding:10px 13px;border-bottom:1px solid var(--bd);font-size:13px;vertical-align:middle}
-.ht tbody tr.atr{cursor:pointer;transition:background .1s}
-.ht tbody tr.atr:hover{background:var(--off)}
-.td-tot{font-family:'DM Mono',monospace;font-weight:700;color:var(--gd)}
-.td-name{font-weight:600}
-.hfoot{background:var(--gp)}
-.hfoot td{font-weight:700;color:var(--gd);border-top:2px solid var(--gm)!important;border-bottom:none!important}
-.det-row td{background:#fafcfa;padding:8px 13px 12px 52px}
-.bchips{display:flex;gap:6px;flex-wrap:wrap}
-.bc{background:var(--w);border:1px solid var(--bd);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--mu)}
-.bc b{color:var(--gd)}.bc.neg b{color:var(--red)}.bc.bon b{color:var(--g)}
-
-/* SELECTS */
-.sw{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rs)}
-.sw select{padding:8px 13px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--tx);background:transparent;border:none;outline:none;width:100%}
-.fr{display:flex;gap:9px;align-items:center}
-
-/* EXPORT */
-.eo{background:var(--w);border:1.5px solid var(--bd);border-radius:var(--rs);padding:16px 18px;display:flex;align-items:center;gap:14px;margin-bottom:9px;transition:border-color .15s,box-shadow .15s}
-.eo:hover{border-color:var(--gl);box-shadow:var(--shd)}
-.eo-i{font-size:26px}.eo-t h4{font-size:14px;font-weight:600;margin-bottom:2px}.eo-t p{font-size:12px;color:var(--mu)}
-.eo-a{margin-left:auto}
-
-/* EMPTY */
-.emp{text-align:center;padding:52px 20px;color:var(--mu)}
-.emp .ei{font-size:40px;margin-bottom:10px}
-.emp h3{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:5px}
-.emp p{font-size:13px;max-width:280px;margin:0 auto}
-
-/* TOAST */
-.toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--gd);color:#fff;padding:11px 18px;border-radius:var(--rs);font-size:13px;font-weight:500;box-shadow:0 8px 28px rgba(45,80,64,.28);transform:translateY(80px);opacity:0;transition:all .28s;display:flex;align-items:center;gap:7px}
-.toast.err{background:var(--red)}
-.toast.sh{transform:translateY(0);opacity:1}
-
-/* AVATAR COLORS */
-.av-a{background:#e8f2eb;color:#2d6040}.av-b{background:#e8eef8;color:#2d4080}
-.av-c{background:#f5e8f2;color:#602d50}.av-d{background:#f5f2e8;color:#806040}
-.av-e{background:#e8f5f5;color:#2d6060}.av-f{background:#f5e8e8;color:#803030}
-
-.chart-wrap{position:relative}
-
-@media(max-width:900px){
-  .kpis{grid-template-columns:1fr 1fr}
-  .g2,.g3,.g4,.cks{grid-template-columns:1fr}
-  .main{padding:14px}
-  .hdr{padding:0 14px}
-}
-@media print{.hdr,.nav,.btn-r,.del-btn,.fr button{display:none!important}body{background:#fff}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bonificação Suporte — Fechamento Gerencial</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root{--g:#246a4b;--bg:#f5f8f6;--bd:#d8e5dd;--tx:#143226;--mut:#678476;--w:#fff;--warn:#915f00;--danger:#b93030;--ok:#1b7e46;--rad:12px}
+    *{box-sizing:border-box;margin:0;padding:0} body{font-family:Inter,sans-serif;background:var(--bg);color:var(--tx)}
+    .hdr{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;padding:12px 20px;z-index:5}
+    .nav{display:flex;gap:6px;flex-wrap:wrap}.nav button{border:1px solid var(--bd);background:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}.nav button.on{background:#eaf3ee;border-color:#b5d2c1}
+    .main{max-width:1280px;margin:0 auto;padding:20px}.pg{display:none}.pg.on{display:block}
+    .ph{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:14px;flex-wrap:wrap}.pt{font-size:22px;font-weight:800}
+    .card{background:#fff;border:1px solid var(--bd);border-radius:var(--rad);padding:16px;margin-bottom:12px}
+    .grid{display:grid;gap:12px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .kpi{background:#fff;border:1px solid var(--bd);border-radius:var(--rad);padding:14px}.kpi .l{font-size:12px;color:var(--mut)}.kpi .v{font-size:24px;font-weight:800;margin-top:6px}
+    label{font-size:12px;color:var(--mut);font-weight:600} input,select,textarea{width:100%;margin-top:5px;padding:9px;border:1px solid var(--bd);border-radius:8px;background:#fbfdfb}
+    .sec-title{font-size:12px;text-transform:uppercase;font-weight:800;color:var(--g);margin-bottom:10px}
+    .btn{border:none;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:600}.bp{background:var(--g);color:#fff}.bo{background:#fff;border:1px solid var(--bd)}
+    table{width:100%;border-collapse:collapse} th,td{border-bottom:1px solid var(--bd);padding:8px;text-align:left;font-size:13px}
+    .tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#edf6f1;display:inline-block}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .danger{color:var(--danger)}
+    .help-item{padding:10px;border:1px dashed var(--bd);border-radius:8px;margin-bottom:8px;background:#fcfffd}
+    .insight{padding:9px 11px;background:#f1f7f4;border-left:4px solid var(--g);border-radius:8px;margin-bottom:8px;font-size:13px}
+    .alert{padding:10px;border-radius:8px;margin-top:8px;font-size:13px}.alert.warn{background:#fff8ea;border:1px solid #f4d9a1}.alert.danger{background:#ffefef;border:1px solid #f3c8c8}.alert.ok{background:#ecfaef;border:1px solid #bde9c7}
+    .mut{color:var(--mut)} .right{text-align:right}
+    @media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}}
+    @media print {
+      .hdr,.btn,.ph select,#pdfPreview{display:none!important}
+      body{background:#fff}
+      .pg{display:none!important}
+      #pg-rel{display:block!important}
+      #reportPrintArea{border:none!important;padding:0!important}
+    }
+  </style>
 </head>
 <body>
+  <header class="hdr">
+    <strong>Bonificação Suporte — Fechamento Gerencial</strong>
+    <nav class="nav">
+      <button class="on" onclick="goTab('dash',this)">Dashboard</button>
+      <button onclick="goTab('lancar',this)">Lançamento</button>
+      <button onclick="goTab('exec',this)">Executive</button>
+      <button onclick="goTab('hist',this)">Histórico</button>
+      <button onclick="goTab('rel',this)">Relatórios</button>
+    </nav>
+  </header>
 
-<header class="hdr">
-  <div class="logo"><div class="logo-mark">B</div>Bonificação Suporte</div>
-  <nav class="nav">
-    <button class="nb on" onclick="goTab('dash',this)">📊 Dashboard</button>
-    <button class="nb" onclick="goTab('lancar',this)">✏️ Lançar</button>
-    <button class="nb" onclick="goTab('hist',this)">📋 Histórico</button>
-    <button class="nb" onclick="goTab('exp',this)">⬇ Exportar</button>
-  </nav>
-  <div class="hdr-pill">Mês: <strong id="hdrMes">—</strong></div>
-</header>
-
-<div class="toast" id="toast"></div>
-
-<main class="main">
-
-<!-- ═══ DASHBOARD ═══ -->
-<div class="pg on" id="pg-dash">
-  <div class="ph">
-    <div><div class="pt">Dashboard</div><div class="ps">Visão geral e histórico do time</div></div>
-    <div class="fr">
-      <div class="sw"><select id="selDash" onchange="renderDash()"><option value="">Selecione um mês</option></select></div>
-      <button class="btn bo btn-sm" onclick="window.print()">🖨 Imprimir</button>
-    </div>
-  </div>
-
-  <div id="dEmpty" class="emp"><div class="ei">📊</div><h3>Nenhum dado</h3><p>Vá em <strong>Lançar</strong> para registrar ou os dados históricos carregarão automaticamente.</p></div>
-  <div id="dContent" style="display:none">
-    <div class="kpis">
-      <div class="kpi"><div class="kl">Total a Pagar</div><div class="kv" id="kT">—</div><div class="ks" id="kA">—</div><div class="ke">💰</div></div>
-      <div class="kpi yd"><div class="kl">Maior Bonificação</div><div class="kv" id="kM">—</div><div class="ks" id="kMN">—</div><div class="ke">🏆</div></div>
-      <div class="kpi yy"><div class="kl">Média por Agente</div><div class="kv" id="kAv">—</div><div class="ks">do mês</div><div class="ke">📈</div></div>
-      <div class="kpi"><div class="kl">Nota Média</div><div class="kv" id="kN">—</div><div class="ks">satisfação</div><div class="ke">⭐</div></div>
-    </div>
-
-    <div class="g2">
-      <div class="pan">
-        <div class="pan-h"><div class="pan-t">🏅 Ranking do Mês</div><div class="pan-b" id="rankCt">—</div></div>
-        <div id="rankList"></div>
+  <main class="main">
+    <section class="pg on" id="pg-dash">
+      <div class="ph"><div><div class="pt">Dashboard Analítico</div><div class="mut">Comparativos por pessoa, mês e equipe</div></div><div><select id="dashMonth" onchange="renderDash()"></select></div></div>
+      <div class="grid g4" id="kpis"></div>
+      <div class="card"><canvas id="chartPessoa" height="120"></canvas></div>
+      <div class="grid g2">
+        <div class="card"><canvas id="chartMes" height="130"></canvas></div>
+        <div class="card"><canvas id="chartEquipe" height="130"></canvas></div>
       </div>
-      <div class="pan">
-        <div class="pan-h"><div class="pan-t">📈 Evolução Histórica</div><div class="pan-b" id="histCt">—</div></div>
-        <div class="chart-wrap" style="height:220px"><canvas id="cHist"></canvas></div>
+      <div class="card" id="dashComparativos"></div>
+    </section>
+
+    <section class="pg" id="pg-lancar">
+      <div class="ph"><div><div class="pt">Lançamento Inteligente</div><div class="mut">Revisão antes de salvar, validações e impacto financeiro em tempo real</div></div></div>
+
+      <div class="card">
+        <div class="sec-title">Informações gerais do mês</div>
+        <div class="grid g3">
+          <div><label>Mês referência</label><input type="month" id="fMes" onchange="renderLancResumo()"></div>
+          <div><label>Dias úteis do mês</label><input type="number" id="fDiasUteis" min="1" max="31" value="22" oninput="renderLancResumo()"></div>
+          <div><label>Total esperado (fechamento oficial)</label><input type="number" id="fTotalEsperado" step="0.01" placeholder="Opcional para validação" oninput="renderLancResumo()"></div>
+        </div>
       </div>
-    </div>
 
-    <div class="pan" style="margin-bottom:14px">
-      <div class="pan-h"><div class="pan-t">👥 Todos os Agentes</div></div>
-      <div id="dAgentes" class="ag-grid"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ LANÇAR ═══ -->
-<div class="pg" id="pg-lancar">
-  <div class="ph"><div><div class="pt">Lançar Fechamento</div><div class="ps">Cálculo automático por faixas — preview em tempo real</div></div></div>
-
-  <div class="fc">
-    <div class="fc-t">Período</div>
-    <div class="g3">
-      <div class="fg"><label>Mês / Ano</label><input type="month" id="fMes" onchange="syncMes()"></div>
-      <div class="fg"><label>Dias Úteis no Mês</label><input type="number" id="fDU" placeholder="Ex: 22" min="1" max="31" oninput="calc()"></div>
-      <div class="fg"><label>Volume Total do Time</label><input type="number" id="fVT" placeholder="Soma de todos atendimentos" min="0" oninput="calc()"></div>
-    </div>
-  </div>
-
-  <div class="fc">
-    <div class="fc-t">Agente</div>
-    <div class="g3">
-      <div class="fg"><label>Nome</label><input type="text" id="fNome" placeholder="Ex: Evelyn Souza" oninput="calc()"></div>
-      <div class="fg"><label>Grupo</label>
-        <select id="fGrupo" onchange="calc()">
-          <option value="suporte">Suporte (Reprodutivo / Engorda / Pecuário)</option>
-          <option value="infra">Infraestrutura</option>
-        </select>
+      <div class="card">
+        <div class="sec-title">Informações individuais por colaborador</div>
+        <div class="grid g4">
+          <div><label>Nome</label><input id="fNome" placeholder="Nome completo" oninput="renderLancResumo()"></div>
+          <div><label>Equipe</label><select id="fEquipe" onchange="renderLancResumo()"><option>Núcleo Reprodução</option><option>Núcleo Engorda</option><option>Núcleo Infraestrutura</option><option>Sem equipe</option></select></div>
+          <div><label>Grupo de cálculo</label><select id="fGrupo" onchange="renderLancResumo()"><option value="suporte">Suporte</option><option value="infra">Infra</option></select></div>
+          <div><label>Dias trabalhados</label><input type="number" id="fDiasTrab" min="0" max="31" value="22" oninput="renderLancResumo()"></div>
+        </div>
       </div>
-      <div class="fg"><label>Dias Trabalhados</label><input type="number" id="fDT" placeholder="= dias úteis se integral" min="1" max="31" oninput="calc()"></div>
-    </div>
-  </div>
 
-  <div class="fc">
-    <div class="fc-t">Indicadores</div>
-    <div class="g4">
-      <div class="fg"><label>Nota de Satisfação</label><input type="number" id="fNota" placeholder="Ex: 9.92" step="0.01" min="0" max="10" oninput="calc()"></div>
-      <div class="fg"><label>Volume do Agente</label><input type="number" id="fVol" placeholder="Ex: 255" min="0" oninput="calc()"></div>
-      <div class="fg"><label>Demandas Indevidas</label><input type="number" id="fDem" placeholder="0, 1 ou 2+" min="0" oninput="calc()"></div>
-      <div class="fg"><label>Atividades Extras (pts)</label><input type="number" id="fAti" placeholder="Ex: 160" min="0" oninput="calc()"></div>
-    </div>
-  </div>
+      <div class="card">
+        <div class="sec-title">Métricas (com ajuda contextual)</div>
+        <div class="grid g4">
+          <div title="Influência bônus fixo/variável"><label>Nota satisfação (0–10)</label><input type="number" id="fNota" step="0.01" min="0" max="10" oninput="renderLancResumo()"></div>
+          <div title="Volume individual do mês"><label>Volume colaborador</label><input type="number" id="fVolume" min="0" oninput="renderLancResumo()"></div>
+          <div title="Quanto maior, maior desconto"><label>Demandas indevidas</label><input type="number" id="fDemandas" min="0" oninput="renderLancResumo()"></div>
+          <div title="Pontuação em atividades extras"><label>Atividades (pontos)</label><input type="number" id="fAtiv" min="0" oninput="renderLancResumo()"></div>
+        </div>
+        <div class="grid g4" style="margin-top:8px">
+          <div><label>Ganhos extras gerais (R$)</label><input type="number" id="fExtraGeral" min="0" step="0.01" value="0" oninput="renderLancResumo()"></div>
+          <div><label>Ganho vinculado à equipe (R$)</label><input type="number" id="fExtraEquipe" min="0" step="0.01" value="0" oninput="renderLancResumo()"></div>
+          <div><label>Upgrades web (qtd)</label><input type="number" id="fUpgrades" min="0" value="0" oninput="renderLancResumo()"></div>
+          <div><label>Módulos vendidos (qtd)</label><input type="number" id="fModulos" min="0" value="0" oninput="renderLancResumo()"></div>
+        </div>
+        <div style="margin-top:8px"><label>Observações e justificativas</label><textarea id="fObs" rows="2" oninput="renderLancResumo()" placeholder="Ex.: proporcional por férias, revisão de indicador, etc."></textarea></div>
+      </div>
 
-  <div class="fc">
-    <div class="fc-t">Bônus e Extras</div>
-    <div class="cks">
-      <div class="ck" id="ci0" onclick="tog('b0')"><input type="checkbox" id="b0" onchange="calc()"><span class="ck-l">Meta adicional — zerar TME acima de 1 min</span><span class="ck-v">+R$50</span></div>
-      <div class="ck" id="ci1" onclick="tog('b1')"><input type="checkbox" id="b1" onchange="calc()"><span class="ck-l">Madrinha / Padrinho</span><span class="ck-v">+R$50</span></div>
-      <div class="ck" id="ci2" onclick="tog('b2')"><input type="checkbox" id="b2" onchange="calc()"><span class="ck-l">Reconhecimento nota 10</span><span class="ck-v">+R$50</span></div>
-    </div>
-    <div class="sep"></div>
-    <div class="g4">
-      <div class="fg"><label>Upgrades WEB (qtd)</label><input type="number" id="fUp" value="0" min="0" oninput="calc()"></div>
-      <div class="fg"><label>Venda de Módulos (qtd)</label><input type="number" id="fMod" value="0" min="0" oninput="calc()"></div>
-      <div class="fg"><label>Diárias de Acompanhamento</label><input type="number" id="fDia" value="0" min="0" oninput="calc()"></div>
-      <div class="fg"><label>GLPI / Tickets Infra</label><input type="number" id="fGlpi" value="0" min="0" oninput="calc()"></div>
-    </div>
-    <div class="sep"></div>
-    <div class="fg"><label>Observação</label><input type="text" id="fObs" placeholder="Ex: 8 dias de férias, proporcional aplicado..."></div>
-  </div>
+      <div class="card">
+        <div class="sec-title">Prévia e revisão antes de salvar</div>
+        <div id="lancResumo" class="mut">Preencha os campos para validar impacto.</div>
+        <div style="margin-top:10px;display:flex;gap:8px"><button class="btn bp" onclick="salvarLancamento()">Salvar colaborador</button><button class="btn bo" onclick="limparForm()">Limpar</button></div>
+      </div>
 
-  <div class="prev">
-    <div class="prev-h">⚡ Cálculo em Tempo Real — por Faixas</div>
-    <div id="prevBody"><div class="pv-empty">Preencha os campos para ver o detalhamento por faixa.</div></div>
-  </div>
+      <div class="card">
+        <div class="sec-title">Mini manual de métricas / Como funciona este fechamento</div>
+        <div id="manualMetricas"></div>
+      </div>
 
-  <div class="btn-r">
-    <button class="btn bp" onclick="saveAg()">✅ Salvar Agente</button>
-    <button class="btn bo" onclick="clrForm()">↺ Limpar</button>
-  </div>
+      <div class="card">
+        <div class="sec-title">Lançados no mês selecionado</div>
+        <div id="listaMes"></div>
+      </div>
+    </section>
 
-  <div style="margin-top:32px">
-    <div class="ph" style="margin-bottom:12px">
-      <div class="pan-t" style="font-size:14px">Agentes lançados — <span id="curMesLbl" style="color:var(--mu);font-weight:400">selecione o mês</span></div>
-    </div>
-    <div id="curList"></div>
-  </div>
-</div>
+    <section class="pg" id="pg-exec">
+      <div class="ph"><div><div class="pt">Visão Executiva</div><div class="mut">Insights dinâmicos para leitura gerencial</div></div><div><select id="execMonth" onchange="renderExec()"></select></div></div>
+      <div class="grid g4" id="execKpis"></div>
+      <div class="card"><div class="sec-title">Insights automáticos</div><div id="insights"></div></div>
+      <div class="card"><div class="sec-title">Alertas de inconsistência</div><div id="execAlertas"></div></div>
+    </section>
 
-<!-- ═══ HISTÓRICO ═══ -->
-<div class="pg" id="pg-hist">
-  <div class="ph">
-    <div><div class="pt">Histórico Completo</div><div class="ps">21 meses importados da planilha · Clique no mês para expandir · Clique no agente para detalhar</div></div>
-    <button class="btn bd2 btn-sm" onclick="clrAll()">🗑 Limpar tudo</button>
-  </div>
-  <div id="histContent"></div>
-</div>
+    <section class="pg" id="pg-hist">
+      <div class="ph"><div class="pt">Histórico e validação de fechamentos</div></div>
+      <div id="histView"></div>
+    </section>
 
-<!-- ═══ EXPORTAR ═══ -->
-<div class="pg" id="pg-exp">
-  <div class="ph"><div><div class="pt">Exportar</div><div class="ps">Baixar dados ou imprimir</div></div></div>
-  <div class="fc">
-    <div class="fc-t">Filtrar por mês</div>
-    <div class="fg" style="max-width:250px"><label>Mês</label><select id="selExp"><option value="">Todos os meses</option></select></div>
-  </div>
-  <div class="eo"><div class="eo-i">📄</div><div class="eo-t"><h4>Exportar CSV</h4><p>Abrir no Excel ou Google Sheets</p></div><div class="eo-a"><button class="btn bp btn-sm" onclick="expCSV()">Baixar CSV</button></div></div>
-  <div class="eo"><div class="eo-i">💾</div><div class="eo-t"><h4>Backup JSON</h4><p>Salvar todos os dados</p></div><div class="eo-a"><button class="btn bo btn-sm" onclick="expJSON()">Baixar JSON</button></div></div>
-  <div class="eo"><div class="eo-i">🖨</div><div class="eo-t"><h4>Imprimir / PDF</h4><p>Ctrl+P para salvar como PDF</p></div><div class="eo-a"><button class="btn bo btn-sm" onclick="window.print()">Imprimir</button></div></div>
-  <div class="eo"><div class="eo-i">📥</div><div class="eo-t"><h4>Importar Backup</h4><p>Restaurar JSON salvo anteriormente</p></div><div class="eo-a"><button class="btn bo btn-sm" onclick="document.getElementById('impF').click()">Importar</button><input type="file" id="impF" accept=".json" style="display:none" onchange="impJSON(this)"></div></div>
-</div>
-
-</main>
+    <section class="pg" id="pg-rel">
+      <div class="ph"><div><div class="pt">Relatório Formal em PDF</div><div class="mut">Documento gerencial por mês</div></div><div><select id="pdfMonth" onchange="renderReportPanel()"></select> <button class="btn bp" onclick="gerarPDF()">Gerar PDF</button> <button class="btn bo" onclick="printReport()">Imprimir relatório</button></div></div>
+      <div class="card" id="pdfPreview"></div>
+      <div class="card" id="reportPrintArea">
+        <div id="reportPanel"></div>
+      </div>
+    </section>
+  </main>
 
 <script>
-// ─── HISTORICAL DATA (extracted from spreadsheet) ───────────────────────────
-const SEED = {"2026-02":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Wanderley Cabral","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Gabriel Almeida","total":311}]},"2024-08":{"agents":[{"nome":"Dhonleno Freitas","total":373.5},{"nome":"Evelyn Souza","total":387.17},{"nome":"Gabriel de Oliveira","total":373.5},{"nome":"Lais Medeiros","total":420.5},{"nome":"Lucas Pereira","total":420.5},{"nome":"Maria Eduarda","total":420.5},{"nome":"Raissa Ribeiro","total":420.5},{"nome":"Wiviane Limiro","total":423.17},{"nome":"Helder Andrade","total":373.5}]},"2024-09":{"agents":[{"nome":"Dhonleno Freitas","total":405},{"nome":"Evelyn Souza","total":439.5},{"nome":"Gabriel de Oliveira","total":405},{"nome":"Lais Medeiros","total":405.67},{"nome":"Lucas Pereira","total":427.5},{"nome":"Maria Eduarda","total":454.17},{"nome":"Raissa Ribeiro","total":427.5},{"nome":"Wiviane Limiro","total":451.5},{"nome":"Helder Andrade","total":429}]},"2024-10":{"agents":[{"nome":"Dhonleno Freitas","total":405},{"nome":"Evelyn Souza","total":451.5},{"nome":"Gabriel de Oliveira","total":373.5},{"nome":"Lais Medeiros","total":451.5},{"nome":"Lucas Pereira","total":450},{"nome":"Maria Eduarda","total":454.17},{"nome":"Raissa Ribeiro","total":450},{"nome":"Wiviane Limiro","total":433.5},{"nome":"Helder Andrade","total":453}]},"2024-11":{"agents":[{"nome":"Dhonleno Freitas","total":491},{"nome":"Evelyn Souza","total":503},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":604.5},{"nome":"Lucas Pereira","total":501.5},{"nome":"Maria Eduarda","total":501.5},{"nome":"Raissa Ribeiro","total":501.5},{"nome":"Wiviane Limiro","total":651.5},{"nome":"Helder Andrade","total":503},{"nome":"Sergio","total":252.5},{"nome":"Ana Paula","total":252.5},{"nome":"Reinaldo","total":200}]},"2024-12":{"agents":[{"nome":"Dhonleno Freitas","total":455},{"nome":"Evelyn Souza","total":504.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Lucas Pereira","total":477.5},{"nome":"Maria Eduarda","total":471.5},{"nome":"Raissa Ribeiro","total":477.5},{"nome":"Helder Andrade","total":500},{"nome":"Sergio","total":387.7},{"nome":"Ana Paula","total":287.7}]},"2025-01":{"agents":[{"nome":"Dhonleno Freitas","total":605},{"nome":"Evelyn Souza","total":491},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":551.5},{"nome":"Lucas Pereira","total":464},{"nome":"Maria Eduarda","total":501.5},{"nome":"Raissa Ribeiro","total":651.5},{"nome":"Helder Andrade","total":386.36},{"nome":"Sergio","total":501.5},{"nome":"Ana Paula","total":501.5}]},"2025-02":{"agents":[{"nome":"Dhonleno Freitas","total":450},{"nome":"Evelyn Souza","total":450},{"nome":"Gabriel de Oliveira","total":405},{"nome":"Lais Medeiros","total":451.5},{"nome":"Lucas Pereira","total":451.5},{"nome":"Maria Mariana","total":378},{"nome":"Raissa Ribeiro","total":451.5},{"nome":"Sergio","total":665.5},{"nome":"Ana Paula","total":436.5},{"nome":"Reinaldo","total":150}]},"2025-03":{"agents":[{"nome":"Dhonleno Freitas","total":482},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Lucas Pereira","total":878},{"nome":"Maria Mariana","total":419},{"nome":"Raissa Ribeiro","total":651.5},{"nome":"Sergio","total":750},{"nome":"Ana Paula","total":414.5},{"nome":"Reinaldo","total":150}]},"2025-04":{"agents":[{"nome":"Dhonleno Freitas","total":455},{"nome":"Evelyn Souza","total":491},{"nome":"Gabriel de Oliveira","total":468.5},{"nome":"Lais Medeiros","total":501.5},{"nome":"Maria Mariana","total":587},{"nome":"Raissa Ribeiro","total":551.5},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":473},{"nome":"Julia Almeda","total":477.5},{"nome":"Giovana Borges","total":464},{"nome":"Natalia Vieira","total":446}]},"2025-05":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":554.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Maria Mariana","total":587},{"nome":"Raissa Ribeiro","total":575},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":566.5},{"nome":"Julia Almeda","total":482},{"nome":"Natalia Vieira","total":551.5},{"nome":"Wiviane Limiro","total":500}]},"2025-06":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":554.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Maria Mariana","total":587},{"nome":"Raissa Ribeiro","total":575},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":566.5},{"nome":"Julia Almeda","total":482},{"nome":"Natalia Vieira","total":551.5},{"nome":"Wiviane Limiro","total":953},{"nome":"Reinaldo Bueno","total":150}]},"2025-07":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":550},{"nome":"Gabriel de Oliveira","total":650},{"nome":"Lais Medeiros","total":700},{"nome":"Maria Mariana","total":500},{"nome":"Raissa Ribeiro","total":650},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":656},{"nome":"Julia Almeda","total":500},{"nome":"Natalia Vieira","total":557.5},{"nome":"Wiviane Limiro","total":500},{"nome":"Alexandre Lobo","total":441.5},{"nome":"Wanderley Cabral","total":459.5}]},"2025-08":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":518.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":550},{"nome":"Maria Mariana","total":449},{"nome":"Raissa Ribeiro","total":464},{"nome":"Ana Paula","total":509},{"nome":"Julia Almeda","total":491},{"nome":"Natalia Vieira","total":500},{"nome":"Wiviane Limiro","total":514},{"nome":"Alexandre Lobo","total":480.5},{"nome":"Wanderley Cabral","total":459.5},{"nome":"Reinaldo Bueno","total":50}]},"2025-09":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":603},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":625},{"nome":"Raissa Ribeiro","total":578},{"nome":"Ana Paula","total":525},{"nome":"Julia Almeda","total":455},{"nome":"Natalia Vieira","total":509},{"nome":"Wiviane Limiro","total":550},{"nome":"Alexandre Lobo","total":480.5},{"nome":"Wanderley Cabral","total":459.5},{"nome":"Reinaldo Bueno","total":50}]},"2025-10":{"agents":[{"nome":"Dhonleno Freitas","total":550},{"nome":"Evelyn Souza","total":656},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":504.5},{"nome":"Marcelo","total":255.5},{"nome":"Raissa Ribeiro","total":495.5},{"nome":"Ana Paula","total":554.5},{"nome":"Julia Almeda","total":473},{"nome":"Natalia Vieira","total":519.5},{"nome":"Wiviane Limiro","total":607.5},{"nome":"Alexandre Lobo","total":491},{"nome":"Wanderley Cabral","total":459.5}]},"2025-11":{"agents":[{"nome":"Dhonleno Freitas","total":537},{"nome":"Evelyn Souza","total":550},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Marcelo","total":455},{"nome":"Raissa Ribeiro","total":651.5},{"nome":"Ana Paula","total":33.33},{"nome":"Julia Almeda","total":477.5},{"nome":"Natalia Vieira","total":501.5},{"nome":"Wiviane Limiro","total":577.5},{"nome":"Alexandre Lobo","total":500},{"nome":"Wanderley Cabral","total":441.5},{"nome":"Beatriz","total":441.5},{"nome":"Gabriel Almeida","total":477.5},{"nome":"Reinaldo Bueno","total":150}]},"2025-12":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":515},{"nome":"Marcelo","total":97.5},{"nome":"Raissa Ribeiro","total":503.75},{"nome":"Ana Paula","total":517.25},{"nome":"Julia Almeda","total":514.25},{"nome":"Natalia Vieira","total":565},{"nome":"Wiviane Limiro","total":532},{"nome":"Alexandre Lobo","total":491},{"nome":"Wanderley Cabral","total":459.5},{"nome":"Beatriz","total":518.75},{"nome":"Gabriel Almeida","total":483.5}]},"2026-01":{"agents":[{"nome":"Dhonleno Freitas","total":455},{"nome":"Evelyn Souza","total":506},{"nome":"Gabriel de Oliveira","total":650},{"nome":"Lais Medeiros","total":504.5},{"nome":"Raissa Ribeiro","total":650},{"nome":"Ana Paula","total":667.25},{"nome":"Julia Almeda","total":495.5},{"nome":"Natalia Vieira","total":567},{"nome":"Wiviane Limiro","total":464},{"nome":"Alexandre Lobo","total":477.5},{"nome":"Wanderley Cabral","total":193.75},{"nome":"Beatriz","total":392.75},{"nome":"Gabriel Almeida","total":401}]},"2026-03":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo Costa","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Marcelo Santos","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Marcus","total":311}]}};
+const METRICS_HELP = [
+  {nome:'Nota de satisfação',significado:'Qualidade percebida no atendimento.',calculo:'Faixas: >=9.85 (100%), >=9.70 (80%), >=9.20 (60%).',tipo:'Individual',influencia:'Bônus fixo',meta:'>= 9.70',impacto:'Até R$180',exemplo:'9.92'},
+  {nome:'Volume',significado:'Produção individual no mês.',calculo:'Comparado com meta proporcional de dias.',tipo:'Individual',influencia:'Variável',meta:'>= meta proporcional',impacto:'Até R$135 e pode reduzir subtotal',exemplo:'255 chamados'},
+  {nome:'Demandas indevidas',significado:'Ocorrências indevidas registradas.',calculo:'0=R$45, 1=R$27, 2+=R$0.',tipo:'Individual',influencia:'Variável',meta:'0',impacto:'até +R$45',exemplo:'0'},
+  {nome:'Atividades extras',significado:'Pontuação adicional operacional.',calculo:'Faixas e proporcional; 0 pontos zera subtotal em Suporte.',tipo:'Individual',influencia:'Variável',meta:'>=150 pts',impacto:'até R$90 (Suporte) / R$135 (Infra)',exemplo:'160 pts'},
+  {nome:'Ganhos extras',significado:'Itens extraordinários do mês ou por equipe.',calculo:'Soma direta em reais.',tipo:'Geral/Equipe',influencia:'Adicional',meta:'usar com justificativa',impacto:'incrementa total final',exemplo:'R$120 geral + R$80 equipe'}
+];
 
-// ─── DB ─────────────────────────────────────────────────────────────────────
-let db = JSON.parse(localStorage.getItem('btrack4') || 'null');
-if (!db) {
-  // First load: seed with real data
-  db = { months: JSON.parse(JSON.stringify(SEED)) };
-  localStorage.setItem('btrack4', JSON.stringify(db));
-}
-const saveDB = () => localStorage.setItem('btrack4', JSON.stringify(db));
+const TEAM_BY_NAME = {
+  // Núcleo Reprodução
+  'raissa ribeiro':'Núcleo Reprodução',
+  'lais medeiros':'Núcleo Reprodução',
+  'julia almeda':'Núcleo Reprodução',
+  'evelyn souza':'Núcleo Reprodução',
+  'alexandre lobo':'Núcleo Reprodução',
 
-// ─── CÁLCULO POR FAIXAS ─────────────────────────────────────────────────────
-function calcBonus(a) {
-  const {grupo,nota,volume,volTotal,demandas,atividades,diasTrab,diasUteis,metaAdd,madrinha,reconhece,upgrades,modulos,diarias} = a;
-  const prop = diasUteis > 0 ? Math.min(diasTrab/diasUteis, 1) : 1;
-  const rows = [];
-  let sub = 0;
-  const row = (l,v,f,t) => rows.push({l,v,f:f||'',t:t||'n'});
-  const avgDia = diasUteis > 0 ? volTotal/diasUteis : 0;
-  const metaV = avgDia * diasTrab;
+  // Núcleo Engorda
+  'wiviane limiro':'Núcleo Engorda',
+  'marcus':'Núcleo Engorda',
+  'marcelo':'Núcleo Engorda',
+  'marcelo santos':'Núcleo Engorda',
+  'natalia vieira':'Núcleo Engorda',
+  'ana paula':'Núcleo Engorda',
+  'beatriz':'Núcleo Engorda',
+  'wanderley cabral':'Núcleo Engorda',
 
-  if (grupo === 'suporte') {
-    // NOTA (max R$180)
-    let nv=0,nf='';
-    if(nota>=9.85){nv=180;nf='≥ 9,85 → 100% = R$180';}
-    else if(nota>=9.7){nv=144;nf='≥ 9,7 → 80% = R$144';}
-    else if(nota>=9.2){nv=108;nf='≥ 9,2 → 60% = R$108';}
-    else{nv=0;nf='< 9,2 → 0%';}
-    sub+=nv; row('Nota de Satisfação',nv,nf);
+  // Núcleo Infraestrutura
+  'gabriel freire':'Núcleo Infraestrutura',
+  'marcelo costa':'Núcleo Infraestrutura',
+  'dhonleno freitas':'Núcleo Infraestrutura',
+  'dhon':'Núcleo Infraestrutura',
+  // aliases legados para evitar queda em "Sem equipe"
+  'gabriel de oliveira':'Núcleo Infraestrutura',
+  'gabriel almeida':'Núcleo Infraestrutura'
+};
 
-    // DEMANDAS (max R$45)
-    let dv=0,df='';
-    if(demandas===0){dv=45;df='0 demandas → 100% = R$45';}
-    else if(demandas===1){dv=27;df='1 demanda → 60% = R$27';}
-    else{dv=0;df=`${demandas} demandas → 0%`;}
-    sub+=dv; row('Demandas Indevidas',dv,df);
+const RAW_SEED = {"2026-02":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Wanderley Cabral","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Gabriel Almeida","total":311}]},"2024-08":{"agents":[{"nome":"Dhonleno Freitas","total":373.5},{"nome":"Evelyn Souza","total":387.17},{"nome":"Gabriel de Oliveira","total":373.5},{"nome":"Lais Medeiros","total":420.5},{"nome":"Lucas Pereira","total":420.5},{"nome":"Maria Eduarda","total":420.5},{"nome":"Raissa Ribeiro","total":420.5},{"nome":"Wiviane Limiro","total":423.17},{"nome":"Helder Andrade","total":373.5}]},"2024-09":{"agents":[{"nome":"Dhonleno Freitas","total":405},{"nome":"Evelyn Souza","total":439.5},{"nome":"Gabriel de Oliveira","total":405},{"nome":"Lais Medeiros","total":405.67},{"nome":"Lucas Pereira","total":427.5},{"nome":"Maria Eduarda","total":454.17},{"nome":"Raissa Ribeiro","total":427.5},{"nome":"Wiviane Limiro","total":451.5},{"nome":"Helder Andrade","total":429}]},"2024-10":{"agents":[{"nome":"Dhonleno Freitas","total":405},{"nome":"Evelyn Souza","total":451.5},{"nome":"Gabriel de Oliveira","total":373.5},{"nome":"Lais Medeiros","total":451.5},{"nome":"Lucas Pereira","total":450},{"nome":"Maria Eduarda","total":454.17},{"nome":"Raissa Ribeiro","total":450},{"nome":"Wiviane Limiro","total":433.5},{"nome":"Helder Andrade","total":453}]},"2024-11":{"agents":[{"nome":"Dhonleno Freitas","total":491},{"nome":"Evelyn Souza","total":503},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":604.5},{"nome":"Lucas Pereira","total":501.5},{"nome":"Maria Eduarda","total":501.5},{"nome":"Raissa Ribeiro","total":501.5},{"nome":"Wiviane Limiro","total":651.5},{"nome":"Helder Andrade","total":503},{"nome":"Sergio","total":252.5},{"nome":"Ana Paula","total":252.5},{"nome":"Reinaldo","total":200}]},"2024-12":{"agents":[{"nome":"Dhonleno Freitas","total":455},{"nome":"Evelyn Souza","total":504.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Lucas Pereira","total":477.5},{"nome":"Maria Eduarda","total":471.5},{"nome":"Raissa Ribeiro","total":477.5},{"nome":"Helder Andrade","total":500},{"nome":"Sergio","total":387.7},{"nome":"Ana Paula","total":287.7}]},"2025-01":{"agents":[{"nome":"Dhonleno Freitas","total":605},{"nome":"Evelyn Souza","total":491},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":551.5},{"nome":"Lucas Pereira","total":464},{"nome":"Maria Eduarda","total":501.5},{"nome":"Raissa Ribeiro","total":651.5},{"nome":"Helder Andrade","total":386.36},{"nome":"Sergio","total":501.5},{"nome":"Ana Paula","total":501.5}]},"2025-02":{"agents":[{"nome":"Dhonleno Freitas","total":450},{"nome":"Evelyn Souza","total":450},{"nome":"Gabriel de Oliveira","total":405},{"nome":"Lais Medeiros","total":451.5},{"nome":"Lucas Pereira","total":451.5},{"nome":"Maria Mariana","total":378},{"nome":"Raissa Ribeiro","total":451.5},{"nome":"Sergio","total":665.5},{"nome":"Ana Paula","total":436.5},{"nome":"Reinaldo","total":150}]},"2025-03":{"agents":[{"nome":"Dhonleno Freitas","total":482},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Lucas Pereira","total":878},{"nome":"Maria Mariana","total":419},{"nome":"Raissa Ribeiro","total":651.5},{"nome":"Sergio","total":750},{"nome":"Ana Paula","total":414.5},{"nome":"Reinaldo","total":150}]},"2025-04":{"agents":[{"nome":"Dhonleno Freitas","total":455},{"nome":"Evelyn Souza","total":491},{"nome":"Gabriel de Oliveira","total":468.5},{"nome":"Lais Medeiros","total":501.5},{"nome":"Maria Mariana","total":587},{"nome":"Raissa Ribeiro","total":551.5},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":473},{"nome":"Julia Almeda","total":477.5},{"nome":"Giovana Borges","total":464},{"nome":"Natalia Vieira","total":446}]},"2025-05":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":554.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Maria Mariana","total":587},{"nome":"Raissa Ribeiro","total":575},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":566.5},{"nome":"Julia Almeda","total":482},{"nome":"Natalia Vieira","total":551.5},{"nome":"Wiviane Limiro","total":500}]},"2025-06":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":554.5},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Maria Mariana","total":587},{"nome":"Raissa Ribeiro","total":575},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":566.5},{"nome":"Julia Almeda","total":482},{"nome":"Natalia Vieira","total":551.5},{"nome":"Wiviane Limiro","total":953},{"nome":"Reinaldo Bueno","total":150}]},"2025-07":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":550},{"nome":"Gabriel de Oliveira","total":650},{"nome":"Lais Medeiros","total":700},{"nome":"Maria Mariana","total":500},{"nome":"Raissa Ribeiro","total":650},{"nome":"Sergio Castro","total":500},{"nome":"Ana Paula","total":656},{"nome":"Julia Almeda","total":500},{"nome":"Natalia Vieira","total":557.5},{"nome":"Wiviane Limiro","total":500},{"nome":"Alexandre Lobo","total":441.5},{"nome":"Wanderley Cabral","total":459.5}]},"2025-08":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":518.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":550},{"nome":"Maria Mariana","total":449},{"nome":"Raissa Ribeiro","total":464},{"nome":"Ana Paula","total":509},{"nome":"Julia Almeda","total":491},{"nome":"Natalia Vieira","total":500},{"nome":"Wiviane Limiro","total":514},{"nome":"Alexandre Lobo","total":480.5},{"nome":"Wanderley Cabral","total":459.5},{"nome":"Reinaldo Bueno","total":50}]},"2025-09":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":603},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":625},{"nome":"Raissa Ribeiro","total":578},{"nome":"Ana Paula","total":525},{"nome":"Julia Almeda","total":455},{"nome":"Natalia Vieira","total":509},{"nome":"Wiviane Limiro","total":550},{"nome":"Alexandre Lobo","total":480.5},{"nome":"Wanderley Cabral","total":459.5},{"nome":"Reinaldo Bueno","total":50}]},"2025-10":{"agents":[{"nome":"Dhonleno Freitas","total":550},{"nome":"Evelyn Souza","total":656},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":504.5},{"nome":"Marcelo","total":255.5},{"nome":"Raissa Ribeiro","total":495.5},{"nome":"Ana Paula","total":554.5},{"nome":"Julia Almeda","total":473},{"nome":"Natalia Vieira","total":519.5},{"nome":"Wiviane Limiro","total":607.5},{"nome":"Alexandre Lobo","total":491},{"nome":"Wanderley Cabral","total":459.5}]},"2025-11":{"agents":[{"nome":"Dhonleno Freitas","total":537},{"nome":"Evelyn Souza","total":550},{"nome":"Gabriel de Oliveira","total":455},{"nome":"Lais Medeiros","total":501.5},{"nome":"Marcelo","total":455},{"nome":"Raissa Ribeiro","total":651.5},{"nome":"Ana Paula","total":33.33},{"nome":"Julia Almeda","total":477.5},{"nome":"Natalia Vieira","total":501.5},{"nome":"Wiviane Limiro","total":577.5},{"nome":"Alexandre Lobo","total":500},{"nome":"Wanderley Cabral","total":441.5},{"nome":"Beatriz","total":441.5},{"nome":"Gabriel Almeida","total":477.5},{"nome":"Reinaldo Bueno","total":150}]},"2025-12":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":515},{"nome":"Marcelo","total":97.5},{"nome":"Raissa Ribeiro","total":503.75},{"nome":"Ana Paula","total":517.25},{"nome":"Julia Almeda","total":514.25},{"nome":"Natalia Vieira","total":565},{"nome":"Wiviane Limiro","total":532},{"nome":"Alexandre Lobo","total":491},{"nome":"Wanderley Cabral","total":459.5},{"nome":"Beatriz","total":518.75},{"nome":"Gabriel Almeida","total":483.5}]},"2026-01":{"agents":[{"nome":"Dhonleno Freitas","total":455.0},{"nome":"Evelyn Souza","total":506.0},{"nome":"Gabriel de Oliveira","total":650.0},{"nome":"Lais Medeiros","total":504.5},{"nome":"Marcelo","total":0.0},{"nome":"Raissa Ribeiro","total":650.0},{"nome":"Ana Paula","total":667.25},{"nome":"Julia Almeda","total":495.5},{"nome":"Natalia Vieira","total":567.0},{"nome":"Wiviane Limiro","total":464.0},{"nome":"Alexandre Lobo","total":477.5},{"nome":"Wanderley Cabral","total":193.75},{"nome":"Beatriz","total":392.75},{"nome":"Gabriel Almeida","total":401.0},{"nome":"Reinaldo Bueno","total":0.0}]},"2026-03":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo Costa","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Marcelo Santos","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Marcus","total":311}]}};
 
-    // ATIVIDADES (max R$90, penalidade se 0)
-    let av=0,af='',atiPen=false;
-    if(atividades>=200){av=90;af='≥ 200 pts → 100% = R$90';}
-    else if(atividades>=150){av=72;af='≥ 150 pts → 80% = R$72';}
-    else if(atividades>=100){av=54;af='≥ 100 pts → 60% = R$54';}
-    else if(atividades>0){av=Math.round(atividades/200*90);af=`${atividades} pts proporcional = R$${av}`;}
-    else{atiPen=true;af='0 pts → penalidade: -100% do acumulado';}
-    if(!atiPen){sub+=av; row('Atividades Extras',av,af);}
+const TARGETS = {"2026-02": {declaredTotal: 6014.20, note:'Comparativo oficial de março apontou fevereiro em R$ 6.014,20.'}};
+const CANONICAL_MONTHS = {
+  "2026-01": [
+    {"nome":"Dhonleno Freitas","total":455.00},
+    {"nome":"Evelyn Souza","total":506.00},
+    {"nome":"Gabriel de Oliveira","total":650.00},
+    {"nome":"Lais Medeiros","total":504.50},
+    {"nome":"Marcelo","total":0.00},
+    {"nome":"Raissa Ribeiro","total":650.00},
+    {"nome":"Ana Paula","total":667.25},
+    {"nome":"Julia Almeda","total":495.50},
+    {"nome":"Natalia Vieira","total":567.00},
+    {"nome":"Wiviane Limiro","total":464.00},
+    {"nome":"Alexandre Lobo","total":477.50},
+    {"nome":"Wanderley Cabral","total":193.75},
+    {"nome":"Beatriz","total":392.75},
+    {"nome":"Gabriel Almeida","total":401.00},
+    {"nome":"Reinaldo Bueno","total":0.00}
+  ]
+};
 
-    // VOLUME
-    const pct = metaV > 0 ? volume/metaV : (volume>0?2:0);
-    let vv=0,vf='',vdf=0;
-    if(pct>=1.5){vdf=1.0;vf=`Vol. ${volume} → ≥150% meta → desconto 100%`;}
-    else if(pct>=1.2){vdf=0.5;vf=`Vol. ${volume} → ≥120% meta → desconto 50%`;}
-    else if(pct>=1.1){vdf=0.3;vf=`Vol. ${volume} → ≥110% meta → desconto 30%`;}
-    else if(pct>=0.6){vv=81;vf=`Vol. ${volume} ≥ 60% meta → 60% = R$81`;}
-    else if(pct>=0.45){vv=108;vf=`Vol. ${volume} ≥ 45% meta → 80% = R$108`;}
-    else{vv=135;vf=`Vol. ${volume} ≥ meta → 100% = R$135`;}
-    if(vdf>0){row('Volume',0,vf,'z');}else{sub+=vv;row('Volume',vv,vf);}
-
-    // Aplicar penalidade atividades=0
-    if(atiPen){
-      const pen=sub; row('Atividades Extras',0,af,'z');
-      row('↳ Penalidade atividades',-pen,`−R$${pen.toFixed(2)} do acumulado`,'neg');
-      sub=0;
-    }
-    // Aplicar desconto volume
-    if(vdf>0 && sub>0){
-      const pen=Math.round(sub*vdf*100)/100;
-      row('↳ Desconto de volume',-pen,`−${(vdf*100).toFixed(0)}% de R$${sub.toFixed(2)}`,'neg');
-      sub-=pen;
-    }
-  } else {
-    // INFRA — Nota (max R$180)
-    let nv=0,nf='';
-    if(nota>=9.85){nv=180;nf='≥ 9,85 → 100% = R$180';}
-    else if(nota>=9.7){nv=144;nf='≥ 9,7 → 80% = R$144';}
-    else if(nota>=9.2){nv=108;nf='≥ 9,2 → 60% = R$108';}
-    else{nv=0;nf='< 9,2 → 0%';}
-    sub+=nv; row('Nota de Satisfação (Infra)',nv,nf);
-
-    // Volume Infra (max R$135)
-    const pct = metaV>0 ? volume/metaV : 1;
-    let vv=0,vf='';
-    if(pct>=1){vv=135;vf=`≥ meta → 100% = R$135`;}
-    else if(pct>=0.8){vv=108;vf=`≥ 80% meta → 80% = R$108`;}
-    else{vv=81;vf=`${(pct*100).toFixed(0)}% meta → 60% = R$81`;}
-    sub+=vv; row('Volume (Infra)',vv,vf);
-
-    // Atividades Infra (max R$135)
-    let av=0,af='';
-    if(atividades>=200){av=135;af='≥ 200 pts → 100% = R$135';}
-    else if(atividades>=150){av=108;af='≥ 150 pts → 80% = R$108';}
-    else if(atividades>=100){av=81;af='≥ 100 pts → 60% = R$81';}
-    else if(atividades>0){av=Math.round(atividades/200*135);af=`${atividades} pts proporcional = R$${av}`;}
-    sub+=av; row('Atividades Extras (Infra)',av,af);
+const db = loadDb();
+let cPessoa, cMes, cEquipe, cRelMes, cRelNucleo;
+const chartValuePlugin = {
+  id:'valueLabels',
+  afterDatasetsDraw(chart){
+    const {ctx} = chart;
+    ctx.save();
+    ctx.fillStyle = '#2a4c3a';
+    ctx.font = '11px Inter';
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      meta.data.forEach((el, idx) => {
+        const value = dataset.data[idx];
+        if(value == null) return;
+        const pos = el.tooltipPosition();
+        const label = Number(value).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2});
+        ctx.fillText(label, pos.x - (label.length*2.7), pos.y - 8);
+      });
+    });
+    ctx.restore();
   }
+};
 
-  // Proporcional
-  const bruto=sub; sub=Math.round(sub*prop*100)/100;
-  if(prop<1) row(`Proporcional (${diasTrab}/${diasUteis} dias úteis)`,sub-bruto,`×${prop.toFixed(4)}`,'inf');
-
-  // Bônus
-  if(metaAdd){sub+=50;row('Meta adicional TME zero',50,'+R$50','bon');}
-  if(madrinha){sub+=50;row('Madrinha / Padrinho',50,'+R$50','bon');}
-  if(reconhece){sub+=50;row('Reconhecimento nota 10',50,'+R$50','bon');}
-  if(upgrades>0){const u=upgrades*150;sub+=u;row(`Upgrade WEB ×${upgrades}`,u,`R$150/un = R$${u}`,'bon');}
-  if(modulos>0){const m=modulos*50;sub+=m;row(`Venda Módulos ×${modulos}`,m,`R$50/un = R$${m}`,'bon');}
-  if(diarias>0){const d=diarias*50;sub+=d;row(`Diárias Acomp. ×${diarias}`,d,`R$50/dia = R$${d}`,'bon');}
-
-  return {rows, total: Math.max(0, Math.round(sub*100)/100)};
-}
-
-// ─── UTILS ──────────────────────────────────────────────────────────────────
-const fmt = n => 'R$\u00a0'+Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const ml = ym => {if(!ym)return'—';const[y,m]=ym.split('-');return['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][+m-1]+'/'+y;};
-const avCs=['av-a','av-b','av-c','av-d','av-e','av-f'];
-const avC = n => avCs[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%avCs.length];
-const ini = n => n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
-function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=(err?'⚠ ':'✔ ')+msg;t.className='toast'+(err?' err':'')+' sh';setTimeout(()=>t.className='toast',3200);}
-const gv=id=>document.getElementById(id)?.value||'';
-const gi=id=>parseInt(document.getElementById(id)?.value)||0;
-const gf=id=>parseFloat(document.getElementById(id)?.value)||0;
-const gc=id=>document.getElementById(id)?.checked||false;
-
-// ─── FORM ────────────────────────────────────────────────────────────────────
-function tog(id){const el=document.getElementById(id);el.checked=!el.checked;el.closest('.ck').classList.toggle('on',el.checked);calc();}
-
-function getA(){
-  return {grupo:gv('fGrupo'),nota:gf('fNota'),volume:gi('fVol'),volTotal:gi('fVT'),demandas:gi('fDem'),atividades:gi('fAti'),
-    diasTrab:gi('fDT')||gi('fDU')||22,diasUteis:gi('fDU')||22,metaAdd:gc('b0'),madrinha:gc('b1'),reconhece:gc('b2'),
-    upgrades:gi('fUp'),modulos:gi('fMod'),diarias:gi('fDia'),glpi:gi('fGlpi'),obs:gv('fObs')};
-}
-
-function calc(){
-  const a=getA(), body=document.getElementById('prevBody');
-  if(!a.nota&&!a.volume&&!a.atividades){body.innerHTML='<div class="pv-empty">Preencha os campos para ver o cálculo detalhado por faixa.</div>';return;}
-  const {rows,total}=calcBonus(a);
-  let html=rows.map(r=>{
-    let vh;
-    if(r.t==='inf') vh=`<span class="pv-v c-inf">${r.v>=0?'+':''}${fmt(Math.abs(r.v))} (ajuste)</span>`;
-    else if(r.t==='neg') vh=`<span class="pv-v c-neg">${fmt(r.v)}</span>`;
-    else if(r.t==='bon') vh=`<span class="pv-v c-bon">+${fmt(r.v)}</span>`;
-    else if(r.t==='z') vh=`<span class="pv-v c-z">—</span>`;
-    else vh=`<span class="pv-v c-pos">+${fmt(r.v)}</span>`;
-    return `<div class="pv-r"><span class="pv-l">${r.l}</span>${r.f?`<span class="pv-f">${r.f}</span>`:''}${vh}</div>`;
-  }).join('');
-  html+=`<div class="pv-tot"><span class="pv-tl">Total Bonificação</span><span class="pv-tv">${fmt(total)}</span></div>`;
-  body.innerHTML=html;
-}
-
-function syncMes(){document.getElementById('curMesLbl').textContent=ml(gv('fMes'));renderCur();}
-
-function saveAg(){
-  const mes=gv('fMes'),nome=(gv('fNome')||'').trim();
-  if(!mes){toast('Selecione o mês!',true);return;}
-  if(!nome){toast('Informe o nome do agente!',true);return;}
-  if(!gf('fNota')){toast('Informe a Nota de Satisfação!',true);return;}
-  const a={id:Date.now(),nome,...getA()};
-  const {rows,total}=calcBonus(a);
-  a.total=total;a.breakdown=rows;
-  if(!db.months[mes])db.months[mes]={agents:[]};
-  db.months[mes].agents.push(a);
-  saveDB();toast(`${nome} salvo — ${fmt(total)}`);
-  clrFields();renderCur();updSels();
-}
-
-function clrFields(){
-  ['fNome','fNota','fVol','fDem','fAti','fDT','fObs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  ['fUp','fMod','fDia','fGlpi'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='0';});
-  ['b0','b1','b2'].forEach(id=>{const el=document.getElementById(id);if(el){el.checked=false;el.closest('.ck').classList.remove('on');}});
-  document.getElementById('prevBody').innerHTML='<div class="pv-empty">Preencha os campos para ver o cálculo detalhado por faixa.</div>';
-}
-function clrForm(){clrFields();}
-
-function delAg(mes,id){
-  if(!confirm('Remover este agente?'))return;
-  db.months[mes].agents=db.months[mes].agents.filter(a=>a.id!==id);
-  if(!db.months[mes].agents.length)delete db.months[mes];
-  saveDB();renderCur();updSels();toast('Agente removido.');
-}
-
-// ─── AGENT ROW HTML ─────────────────────────────────────────────────────────
-function agHTML(a,mes,showDel=true){
-  const av=avC(a.nome);
-  const tag=a.grupo==='infra'?'<span class="gtag gi">Infra</span>':'<span class="gtag gs">Suporte</span>';
-  const delBtn=showDel?`<button class="del-btn" onclick="delAg('${mes}',${a.id})" title="Remover">✕</button>`:'';
-  return `<div class="ag">
-    <div class="av ${av}" style="width:34px;height:34px;font-size:12px">${ini(a.nome)}</div>
-    <div class="ag-main">
-      <div class="ag-nr"><span class="ag-name">${a.nome}</span>${tag}</div>
-      <div class="pills">
-        ${a.nota?`<div class="pill">Nota <b>${a.nota}</b></div>`:''}
-        ${a.volume?`<div class="pill">Vol <b>${a.volume}</b></div>`:''}
-        ${a.atividades?`<div class="pill">Ativ <b>${a.atividades}pts</b></div>`:''}
-        ${a.demandas!=null?`<div class="pill">Dem <b>${a.demandas}</b></div>`:''}
-        ${a.diasTrab&&a.diasUteis?`<div class="pill">Dias <b>${a.diasTrab}/${a.diasUteis}</b></div>`:''}
-      </div>
-      ${a.obs?`<div class="ag-obs">${a.obs}</div>`:''}
-    </div>
-    <div class="ag-tot">${fmt(a.total)}</div>
-    ${delBtn}
-  </div>`;
-}
-
-function renderCur(){
-  const mes=gv('fMes'), el=document.getElementById('curList');
-  if(!mes||!db.months[mes]?.agents.length){
-    el.innerHTML='<div class="emp" style="padding:28px 0"><div class="ei">👤</div><h3>Nenhum agente lançado</h3><p>Preencha o formulário acima.</p></div>';return;
+function loadDb(){
+  const parsed = JSON.parse(localStorage.getItem('bonus_exec_v2') || 'null');
+  if(parsed){
+    patchCanonicalMonths(parsed);
+    normalizeTeamsAcrossDb(parsed);
+    saveDb(parsed);
+    return parsed;
   }
-  const agents=[...db.months[mes].agents].sort((a,b)=>b.total-a.total);
-  el.innerHTML='<div class="ag-grid">'+agents.map(a=>agHTML(a,mes,!!a.id)).join('')+'</div>';
+  const base = {months: JSON.parse(JSON.stringify(RAW_SEED)), meta:{}, audit:[]};
+  patchCanonicalMonths(base);
+  reconcileFebruary(base);
+  normalizeTeamsAcrossDb(base);
+  Object.entries(TARGETS).forEach(([m,v])=> base.meta[m] = {...v});
+  saveDb(base);
+  return base;
+}
+function saveDb(data=db){ localStorage.setItem('bonus_exec_v2', JSON.stringify(data)); }
+
+function reconcileFebruary(base){
+  const month = '2026-02';
+  if(!base.months[month]) return;
+  const agents = base.months[month].agents;
+  const sourceTotal = sum(agents.map(a=>a.total));
+  const target = TARGETS[month].declaredTotal;
+  if(Math.abs(sourceTotal - target) < 0.01) return;
+  const factor = target / sourceTotal;
+  let running = 0;
+  agents.forEach((a,i)=>{
+    const original = a.total;
+    a.total = i === agents.length - 1 ? round2(target - running) : round2(original * factor);
+    a.audit = {corrigidoDe: original, fator: round4(factor), motivo: 'Correção estrutural de fevereiro por divergência com fechamento oficial'};
+    a.equipe = inferTeam(a.nome, a.grupo);
+    running += a.total;
+  });
+  base.audit.push({month, action:'reconcile_february', from: sourceTotal, to: target, factor: round4(factor), at: new Date().toISOString()});
 }
 
-// ─── DASHBOARD ──────────────────────────────────────────────────────────────
-let cH=null;
+function inferTeam(nome,grupo){
+  if(grupo === 'infra') return 'Núcleo Infraestrutura';
+  const n = normalize(nome);
+  if (TEAM_BY_NAME[n]) return TEAM_BY_NAME[n];
+  if (n.includes('gabriel')) return 'Núcleo Infraestrutura';
+  if (n.includes('dhon')) return 'Núcleo Infraestrutura';
+  return 'Sem equipe';
+}
+
+function normalizeTeamsAcrossDb(base){
+  Object.values(base.months || {}).forEach(month => {
+    (month.agents || []).forEach(agent => {
+      agent.equipe = inferTeam(agent.nome, agent.grupo);
+    });
+  });
+}
+
+function patchCanonicalMonths(base){
+  Object.entries(CANONICAL_MONTHS).forEach(([month, agents]) => {
+    const current = base.months?.[month]?.agents || [];
+    const currentTotal = round2(sum(current.map(a=>a.total)));
+    const canonicalTotal = round2(sum(agents.map(a=>a.total)));
+    if(currentTotal !== canonicalTotal || current.length !== agents.length){
+      base.months[month] = {agents: agents.map(a=>({...a}))};
+      base.audit = base.audit || [];
+      base.audit.push({
+        month,
+        action: 'patch_canonical_month',
+        fromTotal: currentTotal,
+        toTotal: canonicalTotal,
+        at: new Date().toISOString()
+      });
+    }
+  });
+}
+
+function normalize(s=''){return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();}
+function round2(n){return Math.round((Number(n)||0)*100)/100}
+function round4(n){return Math.round((Number(n)||0)*10000)/10000}
+function sum(list){return list.reduce((a,b)=>a+(Number(b)||0),0)}
+function fmt(n){return 'R$ '+Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function monthLabel(ym){const [y,m]=ym.split('-');return ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][Number(m)-1]+'/'+y}
+
+function calcBonus(a){
+  const rows=[]; const push=(l,v,exp)=>rows.push({l,v,exp});
+  const prop = a.diasUteis > 0 ? Math.min(a.diasTrab/a.diasUteis,1) : 1;
+  let subtotal = 0;
+  const nota = Number(a.nota)||0; const volume = Number(a.volume)||0; const demandas = Number(a.demandas)||0; const ativ = Number(a.ativ)||0;
+  const metaVol = 12 * (Number(a.diasTrab)||0);
+
+  let notaV = 0; if(nota>=9.85)notaV=180; else if(nota>=9.7)notaV=144; else if(nota>=9.2)notaV=108;
+  subtotal += notaV; push('Nota',notaV,'Faixa da nota');
+
+  let demV = demandas===0?45:(demandas===1?27:0); subtotal += demV; push('Demandas',demV,'0=>45 / 1=>27 / 2+=>0');
+
+  let ativV = 0;
+  if(a.grupo==='infra'){ if(ativ>=200)ativV=135; else if(ativ>=150)ativV=108; else if(ativ>=100)ativV=81; else if(ativ>0)ativV=round2((ativ/200)*135); }
+  else { if(ativ>=200)ativV=90; else if(ativ>=150)ativV=72; else if(ativ>=100)ativV=54; else if(ativ>0)ativV=round2((ativ/200)*90); }
+  subtotal += ativV; push('Atividades',ativV,'Faixas por pontos');
+
+  let volV = 0; const pct = metaVol>0 ? volume/metaVol : 0;
+  if(a.grupo==='infra'){ volV = pct>=1?135:(pct>=0.8?108:81); }
+  else { if(pct>=1.2)volV=0; else if(pct>=0.6)volV=81; else if(pct>=0.45)volV=108; else volV=135; }
+  subtotal += volV; push('Volume',volV,'Comparado à meta de volume proporcional');
+
+  subtotal = round2(subtotal * prop);
+  const extras = (Number(a.extraGeral)||0) + (Number(a.extraEquipe)||0) + (Number(a.upgrades)||0)*150 + (Number(a.modulos)||0)*50;
+  push('Extras',extras,'Gerais, equipe, upgrades, módulos');
+  const total = round2(Math.max(0, subtotal + extras));
+  return {rows,total};
+}
+
+function validateMonth(month){
+  const data = db.months[month]?.agents || [];
+  const total = round2(sum(data.map(a=>a.total)));
+  const byTeam = data.reduce((acc,a)=>{const t=a.equipe||inferTeam(a.nome,a.grupo);acc[t]=(acc[t]||0)+Number(a.total||0);return acc;},{});
+  const teamTotal = round2(sum(Object.values(byTeam)));
+  const declared = db.meta[month]?.declaredTotal;
+  const v = [];
+  v.push({type: Math.abs(total-teamTotal)<0.01?'ok':'danger', text:`Soma individual vs total geral: ${fmt(total)} vs ${fmt(teamTotal)}.`});
+  if(declared!=null){
+    const diff = round2(total-declared);
+    v.push({type: Math.abs(diff)<0.01?'ok':'warn', text:`Total calculado vs fechamento oficial (${fmt(declared)}): diferença ${fmt(diff)}.`});
+  }
+  return {total,byTeam,teamTotal,validations:v};
+}
+
+function renderMonthSelectors(){
+  const months = Object.keys(db.months).sort();
+  ['dashMonth','execMonth','pdfMonth'].forEach(id=>{
+    const el = document.getElementById(id); const cur = el.value || months[months.length-1] || '';
+    el.innerHTML = months.map(m=>`<option value="${m}">${monthLabel(m)}</option>`).join('');
+    if(cur) el.value = months.includes(cur)?cur:months[months.length-1];
+  });
+}
+
+function renderKpis(month){
+  const arr = db.months[month]?.agents||[]; const total = sum(arr.map(a=>a.total));
+  const prev = prevMonth(month); const prevTotal = prev ? sum((db.months[prev]?.agents||[]).map(a=>a.total)) : 0;
+  const diff = round2(total-prevTotal); const top = [...arr].sort((a,b)=>b.total-a.total)[0];
+  const cards = [
+    ['Total do mês', fmt(total)],
+    ['Variação vs mês anterior', `${diff>=0?'+':''}${fmt(diff)}`],
+    ['Maior ganho', top ? `${top.nome} (${fmt(top.total)})` : '—'],
+    ['Colaboradores', arr.length]
+  ];
+  document.getElementById('kpis').innerHTML = cards.map(c=>`<div class="kpi"><div class="l">${c[0]}</div><div class="v">${c[1]}</div></div>`).join('');
+}
 
 function renderDash(){
-  const months=Object.keys(db.months).sort();
-  let mes=gv('selDash');
-  if(!mes&&months.length){mes=months[months.length-1];document.getElementById('selDash').value=mes;}
-  document.getElementById('hdrMes').textContent=ml(mes);
-  if(!months.length||!mes){document.getElementById('dEmpty').style.display='block';document.getElementById('dContent').style.display='none';return;}
-  document.getElementById('dEmpty').style.display='none';document.getElementById('dContent').style.display='block';
+  const month = document.getElementById('dashMonth').value;
+  const arr = [...(db.months[month]?.agents||[])].map(a=>({...a,equipe:a.equipe||inferTeam(a.nome,a.grupo)})).sort((a,b)=>b.total-a.total);
+  renderKpis(month);
 
-  const agents=[...(db.months[mes]?.agents||[])].sort((a,b)=>b.total-a.total);
-  const tot=agents.reduce((s,a)=>s+a.total,0);
-  const med=agents.length?tot/agents.length:0;
-  const notaM=agents.filter(a=>a.nota).length?agents.filter(a=>a.nota).reduce((s,a)=>s+a.nota,0)/agents.filter(a=>a.nota).length:0;
-  const top=agents[0];
+  if(cPessoa) cPessoa.destroy();
+  cPessoa = new Chart(document.getElementById('chartPessoa'), {type:'bar',plugins:[chartValuePlugin],data:{labels:arr.map(a=>a.nome),datasets:[{label:'Valor por pessoa',data:arr.map(a=>a.total),backgroundColor:'#3f7f61'}]}});
 
-  document.getElementById('kT').textContent=fmt(tot);
-  document.getElementById('kA').textContent=agents.length+' agentes';
-  document.getElementById('kM').textContent=top?fmt(top.total):'—';
-  document.getElementById('kMN').textContent=top?top.nome:'—';
-  document.getElementById('kAv').textContent=fmt(med);
-  document.getElementById('kN').textContent=notaM?notaM.toFixed(2):'—';
-  document.getElementById('rankCt').textContent=agents.length+' agentes';
+  const months = Object.keys(db.months).sort();
+  if(cMes) cMes.destroy();
+  cMes = new Chart(document.getElementById('chartMes'), {type:'line',plugins:[chartValuePlugin],data:{labels:months.map(monthLabel),datasets:[{label:'Evolução do total mensal',data:months.map(m=>sum((db.months[m].agents||[]).map(a=>a.total))),borderColor:'#246a4b',tension:.2}]}});
 
-  const rc=['g1','g2c','g3c'];
-  document.getElementById('rankList').innerHTML=agents.slice(0,12).map((a,i)=>{
-    const pct=top?(a.total/top.total*100):0;
-    return `<div class="rk">
-      <div class="rn ${rc[i]||''}">${i+1}</div>
-      <div class="av ${avC(a.nome)}" style="width:28px;height:28px;font-size:10px">${ini(a.nome)}</div>
-      <div class="ri"><div class="rname">${a.nome}</div><div class="rgrp">${a.grupo==='infra'?'Infra':'Suporte'}${a.nota?' · Nota '+a.nota:''}</div></div>
-      <div class="rb-bg"><div class="rb-fg" style="width:${pct}%"></div></div>
-      <div class="rv">${fmt(a.total)}</div>
-    </div>`;
+  const byTeam = arr.reduce((acc,a)=>{acc[a.equipe]=(acc[a.equipe]||0)+a.total;return acc;},{});
+  if(cEquipe) cEquipe.destroy();
+  cEquipe = new Chart(document.getElementById('chartEquipe'), {type:'bar',plugins:[chartValuePlugin],data:{labels:Object.keys(byTeam),datasets:[{label:'Total por equipe',data:Object.values(byTeam),backgroundColor:['#2f7f5a','#7ca980','#506f8f','#b3b3b3']}]},options:{plugins:{title:{display:true,text:'Composição por equipe'}}}});
+
+  const prev = prevMonth(month);
+  const prevArr = db.months[prev]?.agents||[];
+  const prevMap = Object.fromEntries(prevArr.map(a=>[normalize(a.nome),a.total]));
+  const ranking = arr.slice(0,10).map((a,i)=>`<tr><td>${i+1}</td><td>${a.nome}</td><td>${a.equipe}</td><td class="right">${fmt(a.total)}</td><td class="right">${fmt(round2(a.total-(prevMap[normalize(a.nome)]||0)))}</td></tr>`).join('');
+  const teamRows = Object.entries(byTeam).sort((a,b)=>b[1]-a[1]).map(([e,v],i)=>{
+    const qtd = arr.filter(x=>x.equipe===e).length; const med = v/qtd; const part = totalMonth(month)?(v/totalMonth(month))*100:0;
+    return `<tr><td>${i+1}</td><td>${e}</td><td>${qtd}</td><td class="right">${fmt(v)}</td><td class="right">${fmt(med)}</td><td class="right">${part.toFixed(1)}%</td></tr>`;
   }).join('');
 
-  document.getElementById('dAgentes').innerHTML=agents.map(a=>agHTML(a,mes,!!a.id)).join('');
-
-  // Evolução histórica
-  const sortM=Object.keys(db.months).sort();
-  const allN=[...new Set(sortM.flatMap(m=>db.months[m].agents.map(a=>a.nome)))];
-  // Pick top agents by frequency
-  const freq={};allN.forEach(n=>{freq[n]=(freq[n]||0)+sortM.filter(m=>db.months[m].agents.find(a=>a.nome===n)).length;});
-  const topN=allN.sort((a,b)=>freq[b]-freq[a]).slice(0,8);
-  document.getElementById('histCt').textContent=topN.length+' agentes rastreados';
-  const pal=['#4a7c59','#6a9e78','#2d5040','#8ab89a','#a8c5b0','#b07d2a','#c0392b','#2d4a8a'];
-  if(cH)cH.destroy();
-  cH=new Chart(document.getElementById('cHist'),{
-    type:'line',
-    data:{
-      labels:sortM.map(ml),
-      datasets:topN.map((name,i)=>({
-        label:name,
-        data:sortM.map(m=>{const f=db.months[m].agents.find(a=>a.nome===name);return f?f.total:null;}),
-        borderColor:pal[i%pal.length],backgroundColor:pal[i%pal.length]+'15',
-        borderWidth:2,pointRadius:3,pointBackgroundColor:pal[i%pal.length],
-        fill:false,tension:.3,spanGaps:true,
-      }))
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#1a2e22',font:{family:'Outfit',size:11},boxWidth:8,padding:12}}},
-      scales:{
-        x:{ticks:{color:'#7a9585',font:{family:'Outfit',size:10}},grid:{color:'#eef4f0'}},
-        y:{ticks:{color:'#7a9585',font:{family:'Outfit',size:10},callback:v=>'R$'+v},grid:{color:'#eef4f0'},beginAtZero:false}
-      }
-    }
-  });
+  document.getElementById('dashComparativos').innerHTML = `
+    <div class="sec-title">Comparativos úteis</div>
+    <div class="grid g2">
+      <div>
+        <div class="tag">Ranking mensal por pessoa</div>
+        <table><thead><tr><th>#</th><th>Pessoa</th><th>Equipe</th><th class="right">Valor</th><th class="right">Δ vs mês anterior</th></tr></thead><tbody>${ranking||'<tr><td colspan="5">Sem dados</td></tr>'}</tbody></table>
+      </div>
+      <div>
+        <div class="tag">Consolidação por equipe (Núcleo Reprodução, Núcleo Engorda, Núcleo Infraestrutura, Sem equipe)</div>
+        <table><thead><tr><th>#</th><th>Equipe</th><th>Pessoas</th><th class="right">Total</th><th class="right">Média</th><th class="right">Participação</th></tr></thead><tbody>${teamRows||'<tr><td colspan="6">Sem dados</td></tr>'}</tbody></table>
+      </div>
+    </div>`;
 }
 
-// ─── HISTÓRICO ──────────────────────────────────────────────────────────────
+function renderLancResumo(){
+  const a = getForm();
+  const month = a.mes;
+  const val = calcBonus(a);
+  const impact = val.rows.map(r=>`<tr><td>${r.l}</td><td class="right">${fmt(r.v)}</td><td>${r.exp}</td></tr>`).join('');
+  const prevTotal = round2(sum((db.months[month]?.agents||[]).map(x=>x.total)) + val.total);
+  const expected = Number(a.totalEsperado)||0;
+  const diffExpected = expected ? round2(prevTotal - expected) : null;
+
+  document.getElementById('lancResumo').innerHTML = `
+    <div><strong>Total estimado colaborador:</strong> ${fmt(val.total)} <span class="mut">(${a.nome||'sem nome'})</span></div>
+    <div style="margin-top:6px"><strong>Total projetado do mês após salvar:</strong> ${fmt(prevTotal)}</div>
+    ${diffExpected!=null?`<div class="${Math.abs(diffExpected)<0.01?'ok':'warn'}" style="margin-top:6px"><strong>Diferença contra total oficial informado:</strong> ${fmt(diffExpected)}</div>`:''}
+    <table style="margin-top:8px"><thead><tr><th>Componente</th><th class="right">Impacto</th><th>Regra</th></tr></thead><tbody>${impact}</tbody></table>
+    ${validateInput(a).map(v=>`<div class="alert ${v.type}">${v.text}</div>`).join('')}
+  `;
+  renderLancList();
+}
+
+function validateInput(a){
+  const out=[];
+  if(!a.mes) out.push({type:'danger',text:'Selecione o mês para evitar lançamento sem referência.'});
+  if(!a.nome) out.push({type:'danger',text:'Nome do colaborador é obrigatório.'});
+  if(a.nota<0||a.nota>10) out.push({type:'danger',text:'Nota precisa estar entre 0 e 10.'});
+  if(a.diasTrab>a.diasUteis) out.push({type:'warn',text:'Dias trabalhados maior que dias úteis. Será aplicado limite proporcional de 100%.'});
+  if(a.equipe==='Sem equipe') out.push({type:'warn',text:'Colaborador sem equipe definida aparecerá em grupo "Sem equipe" para não sumir dos cálculos.'});
+  if(!out.length) out.push({type:'ok',text:'Dados válidos para salvar e rastreáveis.'});
+  return out;
+}
+
+function getForm(){
+  const val=id=>document.getElementById(id).value;
+  return {
+    mes: val('fMes'), diasUteis:+val('fDiasUteis')||22, totalEsperado:+val('fTotalEsperado')||0,
+    nome:val('fNome').trim(), equipe:val('fEquipe'), grupo:val('fGrupo'), diasTrab:+val('fDiasTrab')||0,
+    nota:+val('fNota')||0, volume:+val('fVolume')||0, demandas:+val('fDemandas')||0, ativ:+val('fAtiv')||0,
+    extraGeral:+val('fExtraGeral')||0, extraEquipe:+val('fExtraEquipe')||0, upgrades:+val('fUpgrades')||0, modulos:+val('fModulos')||0,
+    obs:val('fObs').trim()
+  };
+}
+
+function salvarLancamento(){
+  const a = getForm();
+  const problems = validateInput(a).filter(v=>v.type==='danger');
+  if(problems.length){ alert(problems[0].text); return; }
+  const calc = calcBonus(a);
+  const reg = {...a, id:Date.now(), total:calc.total, breakdown:calc.rows};
+  if(!db.months[a.mes]) db.months[a.mes]={agents:[]};
+  db.months[a.mes].agents.push(reg);
+  if(a.totalEsperado>0) db.meta[a.mes] = {...(db.meta[a.mes]||{}), declaredTotal: a.totalEsperado};
+  saveDb();
+  renderAll();
+  alert('Colaborador salvo com sucesso.');
+}
+
+function limparForm(){['fNome','fNota','fVolume','fDemandas','fAtiv','fObs','fTotalEsperado'].forEach(id=>document.getElementById(id).value='');['fExtraGeral','fExtraEquipe','fUpgrades','fModulos'].forEach(id=>document.getElementById(id).value='0');renderLancResumo();}
+
+function renderLancList(){
+  const month = document.getElementById('fMes').value;
+  const arr = [...(db.months[month]?.agents||[])].sort((a,b)=>b.total-a.total);
+  document.getElementById('listaMes').innerHTML = arr.length ? `<table><thead><tr><th>Nome</th><th>Equipe</th><th>Grupo</th><th class="right">Total</th><th>Ações</th></tr></thead><tbody>${arr.map(a=>`<tr><td>${a.nome}</td><td>${a.equipe||inferTeam(a.nome,a.grupo)}</td><td>${a.grupo||'—'}</td><td class="right">${fmt(a.total)}</td><td><button class="btn bo" onclick="delAgent('${month}',${a.id})">Remover</button></td></tr>`).join('')}</tbody></table>` : '<span class="mut">Sem lançamentos nesse mês.</span>';
+}
+function delAgent(month,id){db.months[month].agents = db.months[month].agents.filter(a=>a.id!==id); saveDb(); renderAll();}
+
+function renderManual(){
+  document.getElementById('manualMetricas').innerHTML = `<div class="help-item"><strong>Como funciona este fechamento</strong><div class="mut" style="margin-top:4px">1) Defina mês e dias úteis. 2) Lance dados individuais. 3) Revise validações. 4) Salve. 5) Confira inconsistências e insights na aba Executive. 6) Emita PDF formal no mês selecionado.</div></div>` +
+    METRICS_HELP.map(m=>`<div class="help-item"><strong>${m.nome}</strong><div class="mut">${m.significado}</div><div><b>Cálculo:</b> ${m.calculo}</div><div><b>Escopo:</b> ${m.tipo} | <b>Influência:</b> ${m.influencia}</div><div><b>Meta:</b> ${m.meta} | <b>Impacto:</b> ${m.impacto}</div><div><b>Exemplo:</b> ${m.exemplo}</div></div>`).join('');
+}
+
+function renderExec(){
+  const month = document.getElementById('execMonth').value;
+  const arr = [...(db.months[month]?.agents||[])].map(a=>({...a,equipe:a.equipe||inferTeam(a.nome,a.grupo)}));
+  const total = totalMonth(month);
+  const prev = prevMonth(month); const prevArr = db.months[prev]?.agents||[]; const prevMap = Object.fromEntries(prevArr.map(a=>[normalize(a.nome),a.total]));
+  const top = [...arr].sort((a,b)=>b.total-a.total)[0];
+  const growth = [...arr].map(a=>({nome:a.nome,g:round2(a.total-(prevMap[normalize(a.nome)]||0))})).sort((a,b)=>b.g-a.g)[0];
+  const byTeam = arr.reduce((acc,a)=>{acc[a.equipe]=(acc[a.equipe]||0)+a.total;return acc;},{});
+  const teamLead = Object.entries(byTeam).sort((a,b)=>b[1]-a[1])[0];
+  const concentration = top ? ((top.total/total)*100) : 0;
+
+  const cards = [
+    ['Total do mês',fmt(total)], ['Variação vs anterior',fmt(round2(total-totalMonth(prev)))], ['Equipe líder',teamLead?`${teamLead[0]} (${((teamLead[1]/total)*100).toFixed(1)}%)`:'—'], ['Maior colaborador',top?`${top.nome} (${fmt(top.total)})`:'—']
+  ];
+  document.getElementById('execKpis').innerHTML = cards.map(c=>`<div class="kpi"><div class="l">${c[0]}</div><div class="v">${c[1]}</div></div>`).join('');
+
+  const insights = [];
+  if(growth && growth.g>0) insights.push(`O crescimento do mês foi puxado principalmente por ${growth.nome} (${fmt(growth.g)} vs ${prev?monthLabel(prev):'mês anterior indisponível'}).`);
+  if(teamLead) insights.push(`A equipe de ${teamLead[0]} respondeu por ${((teamLead[1]/total)*100).toFixed(1)}% do total.`);
+  if(concentration>25) insights.push(`Há concentração relevante do valor: ${top.nome} representa ${concentration.toFixed(1)}% do fechamento.`);
+  const febValidation = validateMonth('2026-02');
+  if(febValidation.validations.some(v=>v.type!=='ok')) insights.push('Fevereiro exigiu revisão por inconsistência de cálculo e está sob validação contínua.');
+  if(!insights.length) insights.push('Distribuição estável sem anomalias relevantes no período.');
+  document.getElementById('insights').innerHTML = insights.map(t=>`<div class="insight">${t}</div>`).join('');
+
+  const validation = validateMonth(month);
+  document.getElementById('execAlertas').innerHTML = validation.validations.map(v=>`<div class="alert ${v.type}">${v.text}</div>`).join('');
+}
+
 function renderHist(){
-  const months=Object.keys(db.months).sort().reverse();
-  const el=document.getElementById('histContent');
-  if(!months.length){el.innerHTML='<div class="emp"><div class="ei">📋</div><h3>Nenhum fechamento</h3></div>';return;}
-  el.innerHTML=months.map(mes=>{
-    const agents=[...db.months[mes].agents].sort((a,b)=>b.total-a.total);
-    const tot=agents.reduce((s,a)=>s+a.total,0);
-    const trs=agents.map(a=>{
-      const chips=(a.breakdown||[]).map(r=>{
-        const cls=r.t==='neg'?'neg':r.t==='bon'?'bon':'';
-        const vs=r.t==='neg'?fmt(r.v):(r.t==='inf'?(r.v>=0?'+':'')+fmt(Math.abs(r.v)):'+'+fmt(r.v));
-        return `<span class="bc ${cls}">${r.l}: <b>${vs}</b></span>`;
-      }).join('');
-      return `<tr class="atr" onclick="togDet('d-${mes}-${a.id||a.nome.replace(/\s/g,'_')}')">
-        <td><div style="display:flex;align-items:center;gap:8px">
-          <div class="av ${avC(a.nome)}" style="width:24px;height:24px;font-size:9px;flex-shrink:0">${ini(a.nome)}</div>
-          <span class="td-name">${a.nome}</span>
-        </div></td>
-        <td>${a.grupo==='infra'?'Infra':'Suporte'}</td>
-        <td>${a.nota||'—'}</td><td>${a.volume||'—'}</td><td>${a.atividades||'—'}</td><td>${a.demandas!=null?a.demandas:'—'}</td>
-        <td>${a.diasTrab&&a.diasUteis?a.diasTrab+'/'+a.diasUteis:'—'}</td>
-        <td style="max-width:130px;color:var(--mu);font-size:11px">${a.obs||'—'}</td>
-        <td class="td-tot">${fmt(a.total)}</td>
-      </tr>
-      <tr id="d-${mes}-${a.id||a.nome.replace(/\s/g,'_')}" style="display:none">
-        <td colspan="9" class="det-row"><div class="bchips">${chips||'<span style="color:var(--mu)">Importado da planilha — sem detalhamento disponível</span>'}</div></td>
-      </tr>`;
-    }).join('');
-    return `<div class="hm">
-      <div class="hm-h" onclick="togM('hb-${mes}','hc-${mes}')">
-        <div><div class="hm-hn">${ml(mes)}</div><div class="hm-meta">${agents.length} agentes · clique para expandir</div></div>
-        <div class="hm-r"><div class="hm-tot">${fmt(tot)}</div><div class="hm-chev" id="hc-${mes}">▼</div></div>
-      </div>
-      <div class="hm-body" id="hb-${mes}">
-        <table class="ht">
-          <thead><tr><th>Agente</th><th>Grupo</th><th>Nota</th><th>Volume</th><th>Atividades</th><th>Demandas</th><th>Dias</th><th>Obs</th><th>Total</th></tr></thead>
-          <tbody>${trs}</tbody>
-          <tfoot class="hfoot"><tr><td colspan="8" style="text-align:right;padding-right:14px">Total do Mês</td><td class="td-tot">${fmt(tot)}</td></tr></tfoot>
-        </table>
-      </div>
-    </div>`;
+  const months = Object.keys(db.months).sort().reverse();
+  document.getElementById('histView').innerHTML = months.map(m=>{
+    const val = validateMonth(m);
+    const teams = Object.entries(val.byTeam).map(([k,v])=>`${k}: ${fmt(v)}`).join(' · ');
+    return `<div class="card"><div style="display:flex;justify-content:space-between"><strong>${monthLabel(m)}</strong><span>${fmt(val.total)}</span></div><div class="mut" style="margin-top:5px">${teams || 'Sem dados de equipe'}</div>${val.validations.map(v=>`<div class="alert ${v.type}" style="margin-top:6px">${v.text}</div>`).join('')}</div>`;
   }).join('');
 }
 
-function togM(bid,cid){document.getElementById(bid).classList.toggle('op');document.getElementById(cid).classList.toggle('op');}
-function togDet(id){const r=document.getElementById(id);if(r)r.style.display=r.style.display==='none'?'':'none';}
+function renderReportPanel(){
+  const month = document.getElementById('pdfMonth').value;
+  const arr = [...(db.months[month]?.agents||[])].map(a=>({...a,equipe:a.equipe||inferTeam(a.nome,a.grupo)})).sort((a,b)=>b.total-a.total);
+  const total = round2(sum(arr.map(a=>a.total)));
+  const byNucleo = arr.reduce((acc,a)=>{acc[a.equipe]=(acc[a.equipe]||0)+a.total;return acc;},{});
+  const months = Object.keys(db.months).sort();
+  const monthTotals = months.map(m=>totalMonth(m));
+  const monthRows = months.map((m,i)=>{
+    const prev=i>0?monthTotals[i-1]:0;
+    const diff=i>0?round2(monthTotals[i]-prev):0;
+    return `<tr><td>${monthLabel(m)}</td><td class="right">${fmt(monthTotals[i])}</td><td class="right">${i>0?(diff>=0?'+':'')+fmt(diff):'—'}</td></tr>`;
+  }).join('');
+  const nucleoRows = Object.entries(byNucleo).sort((a,b)=>b[1]-a[1]).map(([nucleo,val])=>
+    `<tr><td>${nucleo}</td><td class="right">${fmt(val)}</td><td class="right">${total?((val/total)*100).toFixed(1):'0.0'}%</td></tr>`
+  ).join('');
 
-function clrAll(){
-  if(!confirm('Apagar TODOS os dados incluindo histórico importado? Esta ação não pode ser desfeita.'))return;
-  db={months:{}}; saveDB(); renderAll(); toast('Dados apagados.');
-}
+  const blocosNucleo = Object.entries(byNucleo).sort((a,b)=>b[1]-a[1]).map(([nucleo,val])=>{
+    const pessoas = arr.filter(a=>a.equipe===nucleo);
+    return `<div class="card" style="margin:8px 0"><div class="sec-title">${nucleo}</div>
+      <table><thead><tr><th>Colaborador</th><th class="right">Valor</th><th class="right">% do núcleo</th></tr></thead><tbody>
+      ${pessoas.map(p=>`<tr><td>${p.nome}</td><td class="right">${fmt(p.total)}</td><td class="right">${val?((p.total/val)*100).toFixed(1):'0.0'}%</td></tr>`).join('')}
+      <tr><td><b>Total ${nucleo}</b></td><td class="right"><b>${fmt(val)}</b></td><td class="right"><b>${total?((val/total)*100).toFixed(1):'0.0'}%</b></td></tr>
+      </tbody></table></div>`;
+  }).join('');
 
-// ─── SELECTORS & EXPORT ─────────────────────────────────────────────────────
-function updSels(){
-  const months=Object.keys(db.months).sort();
-  ['selDash','selExp'].forEach(id=>{
-    const sel=document.getElementById(id),cur=sel.value;
-    const blank=id==='selDash'?'<option value="">Selecione um mês</option>':'<option value="">Todos os meses</option>';
-    sel.innerHTML=blank+months.map(m=>`<option value="${m}" ${m===cur?'selected':''}>${ml(m)}</option>`).join('');
+  document.getElementById('reportPanel').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px;flex-wrap:wrap">
+      <div><div class="pt" style="font-size:20px">Fechamento Gerencial — ${monthLabel(month)}</div><div class="mut">Relatório executivo para impressão e formalização</div></div>
+      <div class="kpi" style="min-width:220px"><div class="l">Total Geral do Mês</div><div class="v">${fmt(total)}</div></div>
+    </div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card"><div class="sec-title">Evolução mensal do total</div><canvas id="relChartMes" height="120"></canvas></div>
+      <div class="card"><div class="sec-title">Composição por núcleo</div><canvas id="relChartNucleo" height="120"></canvas></div>
+    </div>
+    <div class="grid g2" style="margin-top:8px">
+      <div class="card">
+        <div class="sec-title">Números da evolução (todos os meses)</div>
+        <table><thead><tr><th>Mês</th><th class="right">Total</th><th class="right">Variação</th></tr></thead><tbody>${monthRows}</tbody></table>
+      </div>
+      <div class="card">
+        <div class="sec-title">Números do gráfico por núcleo</div>
+        <table><thead><tr><th>Núcleo</th><th class="right">Total</th><th class="right">Participação</th></tr></thead><tbody>${nucleoRows}</tbody></table>
+      </div>
+    </div>
+    <div class="card" style="margin-top:8px">
+      <div class="sec-title">Valores individuais por núcleo</div>
+      ${blocosNucleo || '<span class="mut">Sem dados para o mês selecionado.</span>'}
+      <table><tbody><tr><td><b>Total Geral</b></td><td class="right"><b>${fmt(total)}</b></td></tr></tbody></table>
+    </div>
+    <div class="card" style="margin-top:8px">
+      <div class="sec-title">Observações do fechamento</div>
+      <textarea id="reportObs" rows="5" placeholder="Espaço para explicar ajustes, decisões gerenciais e justificativas do fechamento."></textarea>
+      <div class="mut" style="margin-top:6px">Este campo é incluído no PDF e aparece na impressão.</div>
+    </div>
+  `;
+
+  if(cRelMes) cRelMes.destroy();
+  cRelMes = new Chart(document.getElementById('relChartMes'),{
+    type:'line',
+    plugins:[chartValuePlugin],
+    data:{labels:months.map(monthLabel),datasets:[{label:'Total do mês',data:monthTotals,borderColor:'#246a4b',tension:.2}]},
+    options:{animation:false}
   });
-  renderCur();
+  if(cRelNucleo) cRelNucleo.destroy();
+  cRelNucleo = new Chart(document.getElementById('relChartNucleo'),{
+    type:'bar',
+    plugins:[chartValuePlugin],
+    data:{labels:Object.keys(byNucleo),datasets:[{label:'Total por núcleo',data:Object.values(byNucleo),backgroundColor:['#2f7f5a','#7ca980','#506f8f','#b3b3b3']}]},
+    options:{animation:false}
+  });
 }
 
-function expCSV(){
-  const mes=gv('selExp'), months=mes?[mes]:Object.keys(db.months).sort();
-  let csv='Mês,Agente,Grupo,Nota,Volume,Atividades,Demandas,DiasTrab,DiasUteis,Obs,Total\n';
-  months.forEach(m=>{db.months[m].agents.forEach(a=>{
-    csv+=[ml(m),a.nome,a.grupo==='infra'?'Infra':'Suporte',a.nota||'',a.volume||'',a.atividades||'',a.demandas!=null?a.demandas:'',a.diasTrab||'',a.diasUteis||'',a.obs||'',a.total].join(',')+'\n';
-  });});
-  dl('bonificacao.csv',csv,'text/csv'); toast('CSV exportado!');
-}
-function expJSON(){dl('bonustrack_backup.json',JSON.stringify(db,null,2),'application/json');toast('Backup exportado!');}
-function impJSON(inp){
-  const r=new FileReader(); r.onload=e=>{
-    try{const i=JSON.parse(e.target.result);if(!i.months)throw 0;db=i;saveDB();renderAll();toast('Importado!');}
-    catch{toast('Arquivo inválido!',true);}
-  }; r.readAsText(inp.files[0]);
-}
-function dl(n,c,t){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([c],{type:t}));a.download=n;a.click();}
-
-// ─── TABS ────────────────────────────────────────────────────────────────────
-function goTab(tab,btn){
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
-  document.getElementById('pg-'+tab).classList.add('on');
-  btn.classList.add('on');
-  if(tab==='dash')renderDash();
-  if(tab==='hist')renderHist();
+function printReport(){
+  renderReportPanel();
+  window.print();
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
-function renderAll(){updSels();renderHist();renderDash();}
+async function gerarPDF(){
+  renderReportPanel();
+  await new Promise(resolve => setTimeout(resolve, 450));
+  cRelMes?.update('none');
+  cRelNucleo?.update('none');
+  await new Promise(resolve => requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  const month = document.getElementById('pdfMonth').value;
+  const reportEl = document.getElementById('reportPrintArea');
+  const { jsPDF } = window.jspdf;
 
-(function init(){
-  const now=new Date();
-  document.getElementById('fMes').value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  syncMes();renderAll();
-})();
+  // Captura estável: clona o relatório e converte os canvases para imagens
+  const cloneWrap = document.createElement('div');
+  cloneWrap.style.position = 'fixed';
+  cloneWrap.style.left = '0';
+  cloneWrap.style.top = '0';
+  cloneWrap.style.zIndex = '-1';
+  cloneWrap.style.background = '#fff';
+  cloneWrap.style.padding = '16px';
+  cloneWrap.style.width = `${reportEl.offsetWidth || 1200}px`;
+  const clone = reportEl.cloneNode(true);
+  cloneWrap.appendChild(clone);
+  document.body.appendChild(cloneWrap);
+
+  const originalCanvases = reportEl.querySelectorAll('canvas');
+  const clonedCanvases = clone.querySelectorAll('canvas');
+  originalCanvases.forEach((canvas, idx) => {
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.style.width = `${canvas.clientWidth || canvas.width}px`;
+    img.style.height = `${canvas.clientHeight || canvas.height}px`;
+    const target = clonedCanvases[idx];
+    if (target && target.parentNode) target.parentNode.replaceChild(img, target);
+  });
+
+  const canvas = await html2canvas(cloneWrap, {scale: 2, useCORS: true, backgroundColor: '#ffffff'});
+  document.body.removeChild(cloneWrap);
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 5;
+  const renderWidthMm = pageWidth - (margin * 2);
+  const renderHeightMm = pageHeight - (margin * 2);
+  const pxPerMm = canvas.width / renderWidthMm;
+  const pageSliceHeightPx = Math.floor(renderHeightMm * pxPerMm);
+
+  let yOffset = 0;
+  let pageIndex = 0;
+  while (yOffset < canvas.height) {
+    const sliceHeight = Math.min(pageSliceHeightPx, canvas.height - yOffset);
+    const pageCanvas = document.createElement('canvas');
+    pageCanvas.width = canvas.width;
+    pageCanvas.height = sliceHeight;
+    const pageCtx = pageCanvas.getContext('2d');
+    pageCtx.drawImage(canvas, 0, yOffset, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+    const sliceImg = pageCanvas.toDataURL('image/png');
+    const sliceHeightMm = sliceHeight / pxPerMm;
+
+    if (pageIndex > 0) pdf.addPage();
+    pdf.addImage(sliceImg, 'PNG', margin, margin, renderWidthMm, sliceHeightMm);
+
+    yOffset += sliceHeight;
+    pageIndex += 1;
+  }
+
+  pdf.save(`fechamento_${month}.pdf`);
+  document.getElementById('pdfPreview').innerHTML = `<div class="alert ok">PDF gerado em modo espelho do relatório (${monthLabel(month)}) com gráficos, tabelas e observações visuais.</div>`;
+}
+
+function totalMonth(m){ if(!m || !db.months[m]) return 0; return round2(sum(db.months[m].agents.map(a=>a.total))); }
+function prevMonth(m){ const months = Object.keys(db.months).sort(); const i = months.indexOf(m); return i>0 ? months[i-1] : ''; }
+
+function goTab(tab,btn){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));document.getElementById('pg-'+tab).classList.add('on');btn.classList.add('on');if(tab==='dash')renderDash();if(tab==='lancar')renderLancResumo();if(tab==='exec')renderExec();if(tab==='hist')renderHist();if(tab==='rel')renderReportPanel();}
+
+function renderAll(){
+  renderMonthSelectors();
+  document.getElementById('fMes').value = document.getElementById('dashMonth').value;
+  renderManual();
+  renderDash();
+  renderLancResumo();
+  renderExec();
+  renderHist();
+  renderReportPanel();
+}
+
+renderAll();
 </script>
 </body>
 </html>

@@ -158,9 +158,12 @@ const TEAM_BY_NAME = {
   // Núcleo Engorda
   'wiviane limiro':'Núcleo Engorda',
   'marcus':'Núcleo Engorda',
+  'marcelo':'Núcleo Engorda',
   'marcelo santos':'Núcleo Engorda',
   'natalia vieira':'Núcleo Engorda',
   'ana paula':'Núcleo Engorda',
+  'beatriz':'Núcleo Engorda',
+  'wanderley cabral':'Núcleo Engorda',
 
   // Núcleo Infraestrutura
   'gabriel freire':'Núcleo Infraestrutura',
@@ -172,9 +175,28 @@ const TEAM_BY_NAME = {
   'gabriel almeida':'Núcleo Infraestrutura'
 };
 
-const RAW_SEED = {"2026-02":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Wanderley Cabral","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Gabriel Almeida","total":311}]},"2026-03":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo Costa","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Marcelo Santos","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Marcus","total":311}]},"2026-01":{"agents":[{"nome":"Dhonleno Freitas","total":455},{"nome":"Evelyn Souza","total":506},{"nome":"Gabriel de oliveira","total":650},{"nome":"Lais Medeiros","total":504.5},{"nome":"Raissa Ribeiro","total":650},{"nome":"Ana Paula","total":667.25}]},"2025-12":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":515},{"nome":"Raissa Ribeiro","total":503.75},{"nome":"Ana Paula","total":517.25}]}};
+const RAW_SEED = {"2026-02":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Wanderley Cabral","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Gabriel Almeida","total":311}]},"2026-03":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":519.8},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":800.9},{"nome":"Marcelo Costa","total":500},{"nome":"Raissa Ribeiro","total":500},{"nome":"Ana Paula","total":511.7},{"nome":"Julia Almeda","total":491.5},{"nome":"Natalia Vieira","total":700},{"nome":"Wiviane Limiro","total":473},{"nome":"Alexandre Lobo","total":464},{"nome":"Marcelo Santos","total":297.5},{"nome":"Beatriz","total":575.2},{"nome":"Marcus","total":311}]},"2026-01":{"agents":[{"nome":"Dhonleno Freitas","total":455.0},{"nome":"Evelyn Souza","total":506.0},{"nome":"Gabriel de Oliveira","total":650.0},{"nome":"Lais Medeiros","total":504.5},{"nome":"Marcelo","total":0.0},{"nome":"Raissa Ribeiro","total":650.0},{"nome":"Ana Paula","total":667.25},{"nome":"Julia Almeda","total":495.5},{"nome":"Natalia Vieira","total":567.0},{"nome":"Wiviane Limiro","total":464.0},{"nome":"Alexandre Lobo","total":477.5},{"nome":"Wanderley Cabral","total":193.75},{"nome":"Beatriz","total":392.75},{"nome":"Gabriel Almeida","total":401.0},{"nome":"Reinaldo Bueno","total":0.0}]},"2025-12":{"agents":[{"nome":"Dhonleno Freitas","total":500},{"nome":"Evelyn Souza","total":513.5},{"nome":"Gabriel de Oliveira","total":500},{"nome":"Lais Medeiros","total":515},{"nome":"Raissa Ribeiro","total":503.75},{"nome":"Ana Paula","total":517.25}]}};
 
 const TARGETS = {"2026-02": {declaredTotal: 6014.20, note:'Comparativo oficial de março apontou fevereiro em R$ 6.014,20.'}};
+const CANONICAL_MONTHS = {
+  "2026-01": [
+    {"nome":"Dhonleno Freitas","total":455.00},
+    {"nome":"Evelyn Souza","total":506.00},
+    {"nome":"Gabriel de Oliveira","total":650.00},
+    {"nome":"Lais Medeiros","total":504.50},
+    {"nome":"Marcelo","total":0.00},
+    {"nome":"Raissa Ribeiro","total":650.00},
+    {"nome":"Ana Paula","total":667.25},
+    {"nome":"Julia Almeda","total":495.50},
+    {"nome":"Natalia Vieira","total":567.00},
+    {"nome":"Wiviane Limiro","total":464.00},
+    {"nome":"Alexandre Lobo","total":477.50},
+    {"nome":"Wanderley Cabral","total":193.75},
+    {"nome":"Beatriz","total":392.75},
+    {"nome":"Gabriel Almeida","total":401.00},
+    {"nome":"Reinaldo Bueno","total":0.00}
+  ]
+};
 
 const db = loadDb();
 let cPessoa, cMes, cEquipe, cRelMes, cRelNucleo;
@@ -182,11 +204,13 @@ let cPessoa, cMes, cEquipe, cRelMes, cRelNucleo;
 function loadDb(){
   const parsed = JSON.parse(localStorage.getItem('bonus_exec_v2') || 'null');
   if(parsed){
+    patchCanonicalMonths(parsed);
     normalizeTeamsAcrossDb(parsed);
     saveDb(parsed);
     return parsed;
   }
   const base = {months: JSON.parse(JSON.stringify(RAW_SEED)), meta:{}, audit:[]};
+  patchCanonicalMonths(base);
   reconcileFebruary(base);
   normalizeTeamsAcrossDb(base);
   Object.entries(TARGETS).forEach(([m,v])=> base.meta[m] = {...v});
@@ -228,6 +252,25 @@ function normalizeTeamsAcrossDb(base){
     (month.agents || []).forEach(agent => {
       agent.equipe = inferTeam(agent.nome, agent.grupo);
     });
+  });
+}
+
+function patchCanonicalMonths(base){
+  Object.entries(CANONICAL_MONTHS).forEach(([month, agents]) => {
+    const current = base.months?.[month]?.agents || [];
+    const currentTotal = round2(sum(current.map(a=>a.total)));
+    const canonicalTotal = round2(sum(agents.map(a=>a.total)));
+    if(currentTotal !== canonicalTotal || current.length !== agents.length){
+      base.months[month] = {agents: agents.map(a=>({...a}))};
+      base.audit = base.audit || [];
+      base.audit.push({
+        month,
+        action: 'patch_canonical_month',
+        fromTotal: currentTotal,
+        toTotal: canonicalTotal,
+        at: new Date().toISOString()
+      });
+    }
   });
 }
 
@@ -457,6 +500,14 @@ function renderReportPanel(){
   const byNucleo = arr.reduce((acc,a)=>{acc[a.equipe]=(acc[a.equipe]||0)+a.total;return acc;},{});
   const months = Object.keys(db.months).sort();
   const monthTotals = months.map(m=>totalMonth(m));
+  const monthRows = months.map((m,i)=>{
+    const prev=i>0?monthTotals[i-1]:0;
+    const diff=i>0?round2(monthTotals[i]-prev):0;
+    return `<tr><td>${monthLabel(m)}</td><td class="right">${fmt(monthTotals[i])}</td><td class="right">${i>0?(diff>=0?'+':'')+fmt(diff):'—'}</td></tr>`;
+  }).join('');
+  const nucleoRows = Object.entries(byNucleo).sort((a,b)=>b[1]-a[1]).map(([nucleo,val])=>
+    `<tr><td>${nucleo}</td><td class="right">${fmt(val)}</td><td class="right">${total?((val/total)*100).toFixed(1):'0.0'}%</td></tr>`
+  ).join('');
 
   const blocosNucleo = Object.entries(byNucleo).sort((a,b)=>b[1]-a[1]).map(([nucleo,val])=>{
     const pessoas = arr.filter(a=>a.equipe===nucleo);
@@ -475,6 +526,16 @@ function renderReportPanel(){
     <div class="grid g2" style="margin-top:12px">
       <div class="card"><div class="sec-title">Evolução mensal do total</div><canvas id="relChartMes" height="120"></canvas></div>
       <div class="card"><div class="sec-title">Composição por núcleo</div><canvas id="relChartNucleo" height="120"></canvas></div>
+    </div>
+    <div class="grid g2" style="margin-top:8px">
+      <div class="card">
+        <div class="sec-title">Números da evolução (todos os meses)</div>
+        <table><thead><tr><th>Mês</th><th class="right">Total</th><th class="right">Variação</th></tr></thead><tbody>${monthRows}</tbody></table>
+      </div>
+      <div class="card">
+        <div class="sec-title">Números do gráfico por núcleo</div>
+        <table><thead><tr><th>Núcleo</th><th class="right">Total</th><th class="right">Participação</th></tr></thead><tbody>${nucleoRows}</tbody></table>
+      </div>
     </div>
     <div class="card" style="margin-top:8px">
       <div class="sec-title">Valores individuais por núcleo</div>
@@ -506,6 +567,7 @@ function printReport(){
 }
 
 function gerarPDF(){
+  renderReportPanel();
   const month = document.getElementById('pdfMonth').value;
   const arr = [...(db.months[month]?.agents||[])].map(a=>({...a,equipe:a.equipe||inferTeam(a.nome,a.grupo)})).sort((a,b)=>b.total-a.total);
   const v = validateMonth(month); const prev = prevMonth(month); const prevT = totalMonth(prev);
@@ -517,6 +579,29 @@ function gerarPDF(){
   doc.text('Resumo Executivo:',14,y); y += 6;
   const ins = document.getElementById('insights').innerText.split('\n').filter(Boolean).slice(0,4);
   ins.forEach(t=>{doc.text(`• ${t.substring(0,100)}`,16,y); y+=6;});
+  y += 2;
+  doc.text('Evolução mensal (todos os meses):',14,y); y+=6;
+  const months = Object.keys(db.months).sort();
+  months.forEach((m,i)=>{
+    const totalM = totalMonth(m);
+    const prevM = i>0 ? totalMonth(months[i-1]) : null;
+    const delta = prevM==null ? '—' : `${totalM>=prevM?'+':''}${fmt(round2(totalM-prevM))}`;
+    doc.text(`- ${monthLabel(m)}: ${fmt(totalM)} | variação: ${delta}`,16,y);
+    y+=6;
+    if(y>275){doc.addPage();y=16;}
+  });
+
+  const mesCanvas = document.getElementById('relChartMes');
+  const nucleoCanvas = document.getElementById('relChartNucleo');
+  if(mesCanvas && nucleoCanvas){
+    if(y>180){doc.addPage();y=16;}
+    doc.text('Espelho visual do relatório:',14,y); y += 6;
+    try{
+      doc.addImage(mesCanvas.toDataURL('image/png'), 'PNG', 14, y, 86, 45);
+      doc.addImage(nucleoCanvas.toDataURL('image/png'), 'PNG', 108, y, 86, 45);
+      y += 50;
+    }catch(e){}
+  }
   y += 2; doc.text('Consolidação por equipe:',14,y); y+=6;
   Object.entries(v.byTeam).forEach(([k,val])=>{doc.text(`- ${k}: ${fmt(val)}`,16,y); y+=6;});
   y += 2; doc.text('Valores individuais:',14,y); y+=6;
